@@ -460,18 +460,18 @@
           <div class="panel">
             <table class="minitable">
               <tr><th></th><th>Ann</th><th>Ben</th><th>Cam</th><th>Dee</th><th>Eli</th></tr>
-              <tr><td class="rowhead">Ann</td><td class="diag">0</td><td class="one">1</td><td class="one">1</td><td class="zero">0</td><td class="zero">0</td></tr>
+              <tr><td class="rowhead">Ann</td><td class="diag">0</td><td class="one">1</td><td class="one">1</td><td class="one">1</td><td class="zero">0</td></tr>
               <tr><td class="rowhead">Ben</td><td class="one">1</td><td class="diag">0</td><td class="zero">0</td><td class="one">1</td><td class="zero">0</td></tr>
-              <tr><td class="rowhead">Cam</td><td class="one">1</td><td class="zero">0</td><td class="diag">0</td><td class="one">1</td><td class="one">1</td></tr>
-              <tr><td class="rowhead">Dee</td><td class="zero">0</td><td class="one">1</td><td class="one">1</td><td class="diag">0</td><td class="one">1</td></tr>
-              <tr><td class="rowhead">Eli</td><td class="zero">0</td><td class="zero">0</td><td class="one">1</td><td class="one">1</td><td class="diag">0</td></tr>
+              <tr><td class="rowhead">Cam</td><td class="one">1</td><td class="zero">0</td><td class="diag">0</td><td class="zero">0</td><td class="one">1</td></tr>
+              <tr><td class="rowhead">Dee</td><td class="one">1</td><td class="one">1</td><td class="zero">0</td><td class="diag">0</td><td class="zero">0</td></tr>
+              <tr><td class="rowhead">Eli</td><td class="zero">0</td><td class="zero">0</td><td class="one">1</td><td class="zero">0</td><td class="diag">0</td></tr>
             </table>
           </div>
           <div class="panel">
             <ul class="notes">
               <li>On paper, we labeled rows and columns with names.</li>
               <li>In C#, the rows and columns are labeled with <b>indices</b> — 0 through 4 — using the exact same order vertices[ ] was filled in.</li>
-              <li><code>adjMatrix[2, 3]</code> is row 2 (Cam), column 3 (Dee) = <b>1</b>, because Cam and Dee are friends.</li>
+              <li><code>adjMatrix[0, 1]</code> is row 0 (Ann), column 1 (Ben) = <b>1</b>, because Ann and Ben are friends.</li>
               <li>It's created once as <code>new int[maxVertices, maxVertices]</code>, then filled in by AddEdge — not drawn by hand anymore, but the exact same idea.</li>
             </ul>
           </div>
@@ -509,11 +509,11 @@
         <div class="panel" style="margin-top:4px;">
           <table class="minitable">
             <tr><th></th><th>Ann</th><th>Ben</th><th class="colhl" style="color:#fff;">Cam</th><th>Dee</th><th>Eli</th></tr>
-            <tr><td class="rowhead">Ann</td><td class="diag">0</td><td class="one">1</td><td class="one">1</td><td class="zero">0</td><td class="zero">0</td></tr>
+            <tr><td class="rowhead">Ann</td><td class="diag">0</td><td class="one">1</td><td class="one">1</td><td class="one">1</td><td class="zero">0</td></tr>
             <tr><td class="rowhead">Ben</td><td class="one">1</td><td class="diag">0</td><td class="zero">0</td><td class="one">1</td><td class="zero">0</td></tr>
-            <tr class="rowhl"><td class="rowhead">Cam</td><td class="one">1</td><td class="zero">0</td><td class="diag">0</td><td class="one">1</td><td class="one">1</td></tr>
-            <tr><td class="rowhead">Dee</td><td class="zero">0</td><td class="one">1</td><td class="one">1</td><td class="diag">0</td><td class="one">1</td></tr>
-            <tr><td class="rowhead">Eli</td><td class="zero">0</td><td class="zero">0</td><td class="one">1</td><td class="one">1</td><td class="diag">0</td></tr>
+            <tr class="rowhl"><td class="rowhead">Cam</td><td class="one">1</td><td class="zero">0</td><td class="diag">0</td><td class="zero">0</td><td class="one">1</td></tr>
+            <tr><td class="rowhead">Dee</td><td class="one">1</td><td class="one">1</td><td class="zero">0</td><td class="diag">0</td><td class="zero">0</td></tr>
+            <tr><td class="rowhead">Eli</td><td class="zero">0</td><td class="zero">0</td><td class="one">1</td><td class="zero">0</td><td class="diag">0</td></tr>
           </table>
         </div>
         <div class="panel" style="margin-top:14px;">
@@ -554,11 +554,11 @@
         <div class="panel" style="margin-top:4px;">
           <table class="minitable">
             <tr><th></th><th>Ann</th><th>Ben</th><th>Cam</th><th>Dee</th><th class="colhl" style="color:#fff;">Eli</th></tr>
-            <tr><td class="rowhead">Ann</td><td class="diag">0</td><td class="one">1</td><td class="one">1</td><td class="zero">0</td><td class="zero">0</td></tr>
+            <tr><td class="rowhead">Ann</td><td class="diag">0</td><td class="one">1</td><td class="one">1</td><td class="one">1</td><td class="zero">0</td></tr>
             <tr><td class="rowhead">Ben</td><td class="one">1</td><td class="diag">0</td><td class="zero">0</td><td class="one">1</td><td class="zero">0</td></tr>
-            <tr><td class="rowhead">Cam</td><td class="one">1</td><td class="zero">0</td><td class="diag">0</td><td class="one">1</td><td class="one">1</td></tr>
-            <tr><td class="rowhead">Dee</td><td class="zero">0</td><td class="one">1</td><td class="one">1</td><td class="diag">0</td><td class="one">1</td></tr>
-            <tr class="rowhl"><td class="rowhead">Eli</td><td class="zero">0</td><td class="zero">0</td><td class="one">1</td><td class="one">1</td><td class="diag">0</td></tr>
+            <tr><td class="rowhead">Cam</td><td class="one">1</td><td class="zero">0</td><td class="diag">0</td><td class="zero">0</td><td class="one">1</td></tr>
+            <tr><td class="rowhead">Dee</td><td class="one">1</td><td class="one">1</td><td class="zero">0</td><td class="diag">0</td><td class="zero">0</td></tr>
+            <tr class="rowhl"><td class="rowhead">Eli</td><td class="zero">0</td><td class="zero">0</td><td class="one">1</td><td class="zero">0</td><td class="diag">0</td></tr>
           </table>
         </div>
         <div class="panel" style="margin-top:14px;">
@@ -793,19 +793,19 @@ public Graph(int maxVertices)
           <tr><td class="step">1</td><td>Push Ann.</td><td class="mono">Ann</td><td>Ann</td></tr>
           <tr><td class="step">2</td><td>Peek Ann; Ben is unvisited → push Ben.</td><td class="mono">Ben, Ann</td><td>Ann Ben</td></tr>
           <tr><td class="step">3</td><td>Peek Ben; Dee is unvisited → push Dee.</td><td class="mono">Dee, Ben, Ann</td><td>Ann Ben Dee</td></tr>
-          <tr><td class="step">4</td><td>Peek Dee; Cam is unvisited → push Cam.</td><td class="mono">Cam, Dee, Ben, Ann</td><td>Ann Ben Dee Cam</td></tr>
-          <tr><td class="step">5</td><td>Peek Cam; Eli is unvisited → push Eli.</td><td class="mono">Eli, Cam, Dee, Ben, Ann</td><td>Ann Ben Dee Cam Eli</td></tr>
-          <tr class="popstep"><td class="step">6</td><td>Peek Eli; no unvisited neighbor → pop Eli.</td><td class="mono">Cam, Dee, Ben, Ann</td><td>(unchanged)</td></tr>
-          <tr class="popstep"><td class="step">7</td><td>Peek Cam; no unvisited neighbor → pop Cam.</td><td class="mono">Dee, Ben, Ann</td><td>(unchanged)</td></tr>
-          <tr class="popstep"><td class="step">8</td><td>Peek Dee; no unvisited neighbor → pop Dee.</td><td class="mono">Ben, Ann</td><td>(unchanged)</td></tr>
-          <tr class="popstep"><td class="step">9</td><td>Peek Ben; no unvisited neighbor → pop Ben.</td><td class="mono">Ann</td><td>(unchanged)</td></tr>
+          <tr class="popstep"><td class="step">4</td><td>Peek Dee; no unvisited neighbor → pop Dee.</td><td class="mono">Ben, Ann</td><td>(unchanged)</td></tr>
+          <tr class="popstep"><td class="step">5</td><td>Peek Ben; no unvisited neighbor → pop Ben.</td><td class="mono">Ann</td><td>(unchanged)</td></tr>
+          <tr><td class="step">6</td><td>Peek Ann; Cam is unvisited → push Cam.</td><td class="mono">Cam, Ann</td><td>Ann Ben Dee Cam</td></tr>
+          <tr><td class="step">7</td><td>Peek Cam; Eli is unvisited → push Eli.</td><td class="mono">Eli, Cam, Ann</td><td>Ann Ben Dee Cam Eli</td></tr>
+          <tr class="popstep"><td class="step">8</td><td>Peek Eli; no unvisited neighbor → pop Eli.</td><td class="mono">Cam, Ann</td><td>(unchanged)</td></tr>
+          <tr class="popstep"><td class="step">9</td><td>Peek Cam; no unvisited neighbor → pop Cam.</td><td class="mono">Ann</td><td>(unchanged)</td></tr>
           <tr class="popstep"><td class="step">10</td><td>Peek Ann; no unvisited neighbor → pop Ann.</td><td class="mono">(empty)</td><td>(unchanged)</td></tr>
           <tr class="donestep"><td class="step">11</td><td>Stack is empty — while loop ends.</td><td class="mono">—</td><td>Ann Ben Dee Cam Eli</td></tr>
         </table>
         <div class="panel" style="margin-top:4px;">
           <ul class="notes">
             <li>Same order as Board 2: <b>Ann, Ben, Dee, Cam, Eli</b> — and the same order as the console output from Program.cs.</li>
-            <li>Rows 6–10 are exactly the backtracking from Board 2 — nothing new is printed, the stack just empties out one dead end at a time.</li>
+            <li>Rows 4–5 back up two dead ends in a row — but at row 6, Ann still has an unvisited neighbor (Cam) left, so the stack pushes forward again instead of emptying out. That's the branch — the whole reason DFS backtracks one vertex at a time instead of jumping straight back to the start.</li>
           </ul>
         </div>
       </section>
@@ -867,8 +867,8 @@ public Graph(int maxVertices)
         <table class="tracetable">
           <tr><th>#</th><th>What happens</th><th>Queue (front → back)</th><th>Printed so far</th></tr>
           <tr><td class="step">1</td><td>Enqueue Ann.</td><td class="mono">Ann</td><td>Ann</td></tr>
-          <tr><td class="step">2</td><td>Dequeue Ann; Ben and Cam unvisited → enqueue both.</td><td class="mono">Ben, Cam</td><td>Ann Ben Cam</td></tr>
-          <tr><td class="step">3</td><td>Dequeue Ben; Dee unvisited → enqueue Dee.</td><td class="mono">Cam, Dee</td><td>Ann Ben Cam Dee</td></tr>
+          <tr><td class="step">2</td><td>Dequeue Ann; Ben, Cam, Dee unvisited → enqueue all three.</td><td class="mono">Ben, Cam, Dee</td><td>Ann Ben Cam Dee</td></tr>
+          <tr class="popstep"><td class="step">3</td><td>Dequeue Ben; every neighbor already visited — nothing new.</td><td class="mono">Cam, Dee</td><td>(unchanged)</td></tr>
           <tr><td class="step">4</td><td>Dequeue Cam; Eli unvisited → enqueue Eli.</td><td class="mono">Dee, Eli</td><td>Ann Ben Cam Dee Eli</td></tr>
           <tr class="popstep"><td class="step">5</td><td>Dequeue Dee; every neighbor already visited — nothing new.</td><td class="mono">Eli</td><td>(unchanged)</td></tr>
           <tr class="donestep"><td class="step">6</td><td>Dequeue Eli; every neighbor already visited. Queue is empty — loop ends.</td><td class="mono">(empty)</td><td>Ann Ben Cam Dee Eli</td></tr>

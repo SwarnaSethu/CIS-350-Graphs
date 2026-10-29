@@ -147,18 +147,18 @@
       <div class="rail-item" data-step="3"><span class="n">3</span>Visit Ann</div>
       <div class="rail-item" data-step="4"><span class="n">4</span>→ Ben</div>
       <div class="rail-item" data-step="5"><span class="n">5</span>→ Dee</div>
-      <div class="rail-item" data-step="6"><span class="n">6</span>→ Cam</div>
-      <div class="rail-item" data-step="7"><span class="n">7</span>→ Eli</div>
-      <div class="rail-item" data-step="8"><span class="n">8</span>Pop Eli ↩ Cam</div>
-      <div class="rail-item" data-step="9"><span class="n">9</span>Pop Cam ↩ Dee</div>
-      <div class="rail-item" data-step="10"><span class="n">10</span>Pop Dee ↩ Ben</div>
-      <div class="rail-item" data-step="11"><span class="n">11</span>Pop Ben ↩ Ann</div>
+      <div class="rail-item" data-step="6"><span class="n">6</span>Pop Dee ↩ Ben</div>
+      <div class="rail-item" data-step="7"><span class="n">7</span>Pop Ben ↩ Ann</div>
+      <div class="rail-item" data-step="8"><span class="n">8</span>→ Cam</div>
+      <div class="rail-item" data-step="9"><span class="n">9</span>→ Eli</div>
+      <div class="rail-item" data-step="10"><span class="n">10</span>Pop Eli ↩ Cam</div>
+      <div class="rail-item" data-step="11"><span class="n">11</span>Pop Cam ↩ Ann</div>
       <div class="rail-item" data-step="12"><span class="n">12</span>Pop Ann — Empty</div>
       <div class="rail-item" data-step="13"><span class="n">13</span>DFS Result</div>
       <div class="rail-group">BFS Trace (start: Ann)</div>
       <div class="rail-item" data-step="14"><span class="n">14</span>Visit Ann</div>
-      <div class="rail-item" data-step="15"><span class="n">15</span>→ Ben, Cam</div>
-      <div class="rail-item" data-step="16"><span class="n">16</span>→ Dee</div>
+      <div class="rail-item" data-step="15"><span class="n">15</span>→ Ben, Cam, Dee</div>
+      <div class="rail-item" data-step="16"><span class="n">16</span>Dequeue Ben</div>
       <div class="rail-item" data-step="17"><span class="n">17</span>→ Eli</div>
       <div class="rail-item" data-step="18"><span class="n">18</span>Dequeue Dee</div>
       <div class="rail-item" data-step="19"><span class="n">19</span>Dequeue Eli — Empty</div>
@@ -186,10 +186,9 @@
             <svg class="gsvg" width="440" height="220" viewBox="0 0 520 260">
               <line class="gedge" x1="260" y1="40"  x2="120" y2="130"/>
               <line class="gedge" x1="260" y1="40"  x2="400" y2="130"/>
+              <line class="gedge" x1="260" y1="40"  x2="260" y2="220"/>
               <line class="gedge" x1="120" y1="130" x2="260" y2="220"/>
-              <line class="gedge" x1="400" y1="130" x2="260" y2="220"/>
               <line class="gedge" x1="400" y1="130" x2="460" y2="220"/>
-              <line class="gedge" x1="260" y1="220" x2="460" y2="220"/>
               <g class="gnode"><circle cx="260" cy="40"  r="26"/><text x="260" y="41">Ann</text></g>
               <g class="gnode"><circle cx="120" cy="130" r="26"/><text x="120" y="131">Ben</text></g>
               <g class="gnode"><circle cx="400" cy="130" r="26"/><text x="400" y="131">Cam</text></g>
@@ -228,7 +227,7 @@
         </div>
       </section>
 
-      <!-- ===================== DFS TRACE SLIDES 3-9 ===================== -->
+      <!-- ===================== DFS TRACE SLIDES 3-12 ===================== -->
       <section class="slide">
         <h2 class="slide-title">DFS — Step 1: Visit Ann</h2>
         <p class="slide-sub">Mark Ann visited, print her, push her on the stack.</p>
@@ -239,10 +238,9 @@
           <svg class="gsvg" width="400" height="200" viewBox="0 0 520 260">
             <line class="gedge" x1="260" y1="40" x2="120" y2="130"/>
             <line class="gedge" x1="260" y1="40" x2="400" y2="130"/>
+            <line class="gedge" x1="260" y1="40" x2="260" y2="220"/>
             <line class="gedge" x1="120" y1="130" x2="260" y2="220"/>
-            <line class="gedge" x1="400" y1="130" x2="260" y2="220"/>
             <line class="gedge" x1="400" y1="130" x2="460" y2="220"/>
-            <line class="gedge" x1="260" y1="220" x2="460" y2="220"/>
             <g class="gnode current"><circle cx="260" cy="40" r="26"/><text x="260" y="41">Ann</text></g>
             <g class="gnode"><circle cx="120" cy="130" r="26"/><text x="120" y="131">Ben</text></g>
             <g class="gnode"><circle cx="400" cy="130" r="26"/><text x="400" y="131">Cam</text></g>
@@ -262,7 +260,7 @@
 
       <section class="slide">
         <h2 class="slide-title">DFS — Step 2: Top = Ann → go to Ben</h2>
-        <p class="slide-sub">Ann's unvisited neighbors: Ben, Cam. Take the first one (Ben). Visit, print, push.</p>
+        <p class="slide-sub">Ann's unvisited neighbors: Ben, Cam, Dee. Take the first one (Ben). Visit, print, push.</p>
         <div class="result-strip"><b>DFS output so far:</b> Ann → Ben</div>
         <div class="legend"><span><i class="l-unv"></i>unvisited</span><span><i class="l-vis"></i>visited</span><span><i class="l-cur"></i>current (stack top)</span></div>
         <div class="trace-grid">
@@ -270,10 +268,9 @@
           <svg class="gsvg" width="400" height="200" viewBox="0 0 520 260">
             <line class="gedge path" x1="260" y1="40" x2="120" y2="130"/>
             <line class="gedge" x1="260" y1="40" x2="400" y2="130"/>
+            <line class="gedge" x1="260" y1="40" x2="260" y2="220"/>
             <line class="gedge" x1="120" y1="130" x2="260" y2="220"/>
-            <line class="gedge" x1="400" y1="130" x2="260" y2="220"/>
             <line class="gedge" x1="400" y1="130" x2="460" y2="220"/>
-            <line class="gedge" x1="260" y1="220" x2="460" y2="220"/>
             <g class="gnode visited"><circle cx="260" cy="40" r="26"/><text x="260" y="41">Ann</text></g>
             <g class="gnode current"><circle cx="120" cy="130" r="26"/><text x="120" y="131">Ben</text></g>
             <g class="gnode"><circle cx="400" cy="130" r="26"/><text x="400" y="131">Cam</text></g>
@@ -302,10 +299,9 @@
           <svg class="gsvg" width="400" height="200" viewBox="0 0 520 260">
             <line class="gedge path" x1="260" y1="40" x2="120" y2="130"/>
             <line class="gedge" x1="260" y1="40" x2="400" y2="130"/>
+            <line class="gedge" x1="260" y1="40" x2="260" y2="220"/>
             <line class="gedge path" x1="120" y1="130" x2="260" y2="220"/>
-            <line class="gedge" x1="400" y1="130" x2="260" y2="220"/>
             <line class="gedge" x1="400" y1="130" x2="460" y2="220"/>
-            <line class="gedge" x1="260" y1="220" x2="460" y2="220"/>
             <g class="gnode visited"><circle cx="260" cy="40" r="26"/><text x="260" y="41">Ann</text></g>
             <g class="gnode visited"><circle cx="120" cy="130" r="26"/><text x="120" y="131">Ben</text></g>
             <g class="gnode"><circle cx="400" cy="130" r="26"/><text x="400" y="131">Cam</text></g>
@@ -326,163 +322,24 @@
       </section>
 
       <section class="slide">
-        <h2 class="slide-title">DFS — Step 4: Top = Dee → go to Cam</h2>
-        <p class="slide-sub">Dee's unvisited neighbors: Cam (Ben already visited). Visit, print, push.</p>
-        <div class="result-strip"><b>DFS output so far:</b> Ann → Ben → Dee → Cam</div>
+        <h2 class="slide-title">DFS — Step 4: Dead End at Dee — Pop and Backtrack</h2>
+        <p class="slide-sub">Dee's neighbors (Ann, Ben) are <b>both already visited</b> — a dead end, nothing new to explore from here. <b>Pop Dee off the stack</b> and backtrack: check the vertex now on top, Ben, to see if <i>it</i> still has an unvisited neighbor.</p>
+        <div class="result-strip"><b>DFS output so far:</b> Ann → Ben → Dee</div>
         <div class="legend"><span><i class="l-unv"></i>unvisited</span><span><i class="l-vis"></i>visited</span><span><i class="l-cur"></i>current (stack top)</span></div>
         <div class="trace-grid">
           <div class="graph-diagram">
           <svg class="gsvg" width="400" height="200" viewBox="0 0 520 260">
             <line class="gedge path" x1="260" y1="40" x2="120" y2="130"/>
             <line class="gedge" x1="260" y1="40" x2="400" y2="130"/>
+            <line class="gedge" x1="260" y1="40" x2="260" y2="220"/>
             <line class="gedge path" x1="120" y1="130" x2="260" y2="220"/>
-            <line class="gedge path" x1="400" y1="130" x2="260" y2="220"/>
             <line class="gedge" x1="400" y1="130" x2="460" y2="220"/>
-            <line class="gedge" x1="260" y1="220" x2="460" y2="220"/>
-            <g class="gnode visited"><circle cx="260" cy="40" r="26"/><text x="260" y="41">Ann</text></g>
-            <g class="gnode visited"><circle cx="120" cy="130" r="26"/><text x="120" y="131">Ben</text></g>
-            <g class="gnode current"><circle cx="400" cy="130" r="26"/><text x="400" y="131">Cam</text></g>
-            <g class="gnode visited"><circle cx="260" cy="220" r="26"/><text x="260" y="221">Dee</text></g>
-            <g class="gnode"><circle cx="460" cy="220" r="26"/><text x="460" y="221">Eli</text></g>
-          </svg>
-        </div>
-          <div class="side-panel">
-            <div class="ptr-cap">stack (grows upward)</div>
-            <div class="stackv">
-          <div class="stackbox"><div class="ptr-sub">Ann</div></div>
-          <div class="stackbox"><div class="ptr-sub">Ben</div></div>
-          <div class="stackbox"><div class="ptr-sub">Dee</div></div>
-          <div class="stackbox top"><div class="ptr-sub">Cam</div></div>
-        </div>
-            <div class="stack-floor"></div>
-          </div>
-        </div>
-      </section>
-
-      <section class="slide">
-        <h2 class="slide-title">DFS — Step 5: Top = Cam → go to Eli</h2>
-        <p class="slide-sub">Cam's unvisited neighbors: Eli (Ann, Dee already visited). Visit, print, push.</p>
-        <div class="result-strip"><b>DFS output so far:</b> Ann → Ben → Dee → Cam → Eli</div>
-        <div class="legend"><span><i class="l-unv"></i>unvisited</span><span><i class="l-vis"></i>visited</span><span><i class="l-cur"></i>current (stack top)</span></div>
-        <div class="trace-grid">
-          <div class="graph-diagram">
-          <svg class="gsvg" width="400" height="200" viewBox="0 0 520 260">
-            <line class="gedge path" x1="260" y1="40" x2="120" y2="130"/>
-            <line class="gedge" x1="260" y1="40" x2="400" y2="130"/>
-            <line class="gedge path" x1="120" y1="130" x2="260" y2="220"/>
-            <line class="gedge path" x1="400" y1="130" x2="260" y2="220"/>
-            <line class="gedge path" x1="400" y1="130" x2="460" y2="220"/>
-            <line class="gedge" x1="260" y1="220" x2="460" y2="220"/>
-            <g class="gnode visited"><circle cx="260" cy="40" r="26"/><text x="260" y="41">Ann</text></g>
-            <g class="gnode visited"><circle cx="120" cy="130" r="26"/><text x="120" y="131">Ben</text></g>
-            <g class="gnode visited"><circle cx="400" cy="130" r="26"/><text x="400" y="131">Cam</text></g>
-            <g class="gnode visited"><circle cx="260" cy="220" r="26"/><text x="260" y="221">Dee</text></g>
-            <g class="gnode current"><circle cx="460" cy="220" r="26"/><text x="460" y="221">Eli</text></g>
-          </svg>
-        </div>
-          <div class="side-panel">
-            <div class="ptr-cap">stack (grows upward)</div>
-            <div class="stackv">
-          <div class="stackbox"><div class="ptr-sub">Ann</div></div>
-          <div class="stackbox"><div class="ptr-sub">Ben</div></div>
-          <div class="stackbox"><div class="ptr-sub">Dee</div></div>
-          <div class="stackbox"><div class="ptr-sub">Cam</div></div>
-          <div class="stackbox top"><div class="ptr-sub">Eli</div></div>
-        </div>
-            <div class="stack-floor"></div>
-          </div>
-        </div>
-      </section>
-
-      <section class="slide">
-        <h2 class="slide-title">DFS — Step 6: Dead End at Eli — Pop and Backtrack</h2>
-        <p class="slide-sub">Eli's neighbors (Cam, Dee) are <b>both already visited</b> — a dead end, nothing new to explore from here. <b>Pop Eli off the stack</b> and backtrack: check the vertex now on top, Cam, to see if <i>it</i> still has an unvisited neighbor.</p>
-        <div class="result-strip"><b>DFS output so far:</b> Ann → Ben → Dee → Cam → Eli</div>
-        <div class="legend"><span><i class="l-unv"></i>unvisited</span><span><i class="l-vis"></i>visited</span><span><i class="l-cur"></i>current (stack top)</span></div>
-        <div class="trace-grid">
-          <div class="graph-diagram">
-          <svg class="gsvg" width="400" height="200" viewBox="0 0 520 260">
-            <line class="gedge path" x1="260" y1="40" x2="120" y2="130"/>
-            <line class="gedge" x1="260" y1="40" x2="400" y2="130"/>
-            <line class="gedge path" x1="120" y1="130" x2="260" y2="220"/>
-            <line class="gedge path" x1="400" y1="130" x2="260" y2="220"/>
-            <line class="gedge" x1="400" y1="130" x2="460" y2="220"/>
-            <line class="gedge" x1="260" y1="220" x2="460" y2="220"/>
-            <line class="backtrack-line" x1="460" y1="220" x2="400" y2="130" marker-end="url(#backArrow)"/>
-            <g class="gnode visited"><circle cx="260" cy="40" r="26"/><text x="260" y="41">Ann</text></g>
-            <g class="gnode visited"><circle cx="120" cy="130" r="26"/><text x="120" y="131">Ben</text></g>
-            <g class="gnode current"><circle cx="400" cy="130" r="26"/><text x="400" y="131">Cam</text></g>
-            <g class="gnode visited"><circle cx="260" cy="220" r="26"/><text x="260" y="221">Dee</text></g>
-            <g class="gnode popped"><circle cx="460" cy="220" r="26"/><text x="460" y="221">Eli</text></g>
-          </svg>
-        </div>
-          <div class="side-panel">
-            <div class="pop-label">↩ pop Eli → backtrack to Cam</div>
-            <div class="ptr-cap">stack (grows upward)</div>
-            <div class="stackv">
-          <div class="stackbox"><div class="ptr-sub">Ann</div></div>
-          <div class="stackbox"><div class="ptr-sub">Ben</div></div>
-          <div class="stackbox"><div class="ptr-sub">Dee</div></div>
-          <div class="stackbox top"><div class="ptr-sub">Cam</div></div>
-        </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="slide">
-        <h2 class="slide-title">DFS — Step 7: Dead End at Cam — Pop and Backtrack</h2>
-        <p class="slide-sub">Back at Cam: its neighbors (Ann, Dee, Eli) are <b>all visited too</b> — still no unvisited vertex to try. <b>Pop Cam off the stack</b> and backtrack further, to Dee.</p>
-        <div class="result-strip"><b>DFS output so far:</b> Ann → Ben → Dee → Cam → Eli</div>
-        <div class="legend"><span><i class="l-unv"></i>unvisited</span><span><i class="l-vis"></i>visited</span><span><i class="l-cur"></i>current (stack top)</span></div>
-        <div class="trace-grid">
-          <div class="graph-diagram">
-          <svg class="gsvg" width="400" height="200" viewBox="0 0 520 260">
-            <line class="gedge path" x1="260" y1="40" x2="120" y2="130"/>
-            <line class="gedge" x1="260" y1="40" x2="400" y2="130"/>
-            <line class="gedge path" x1="120" y1="130" x2="260" y2="220"/>
-            <line class="gedge" x1="400" y1="130" x2="260" y2="220"/>
-            <line class="gedge" x1="400" y1="130" x2="460" y2="220"/>
-            <line class="gedge" x1="260" y1="220" x2="460" y2="220"/>
-            <line class="backtrack-line" x1="400" y1="130" x2="260" y2="220" marker-end="url(#backArrow)"/>
-            <g class="gnode visited"><circle cx="260" cy="40" r="26"/><text x="260" y="41">Ann</text></g>
-            <g class="gnode visited"><circle cx="120" cy="130" r="26"/><text x="120" y="131">Ben</text></g>
-            <g class="gnode popped"><circle cx="400" cy="130" r="26"/><text x="400" y="131">Cam</text></g>
-            <g class="gnode current"><circle cx="260" cy="220" r="26"/><text x="260" y="221">Dee</text></g>
-            <g class="gnode visited"><circle cx="460" cy="220" r="26"/><text x="460" y="221">Eli</text></g>
-          </svg>
-        </div>
-          <div class="side-panel">
-            <div class="pop-label">↩ pop Cam → backtrack to Dee</div>
-            <div class="ptr-cap">stack (grows upward)</div>
-            <div class="stackv">
-          <div class="stackbox"><div class="ptr-sub">Ann</div></div>
-          <div class="stackbox"><div class="ptr-sub">Ben</div></div>
-          <div class="stackbox top"><div class="ptr-sub">Dee</div></div>
-        </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="slide">
-        <h2 class="slide-title">DFS — Step 8: Dead End at Dee — Pop and Backtrack</h2>
-        <p class="slide-sub">Back at Dee: its neighbors (Ben, Cam, Eli) are <b>all visited</b> too. <b>Pop Dee off the stack</b> and backtrack further, to Ben.</p>
-        <div class="result-strip"><b>DFS output so far:</b> Ann → Ben → Dee → Cam → Eli</div>
-        <div class="legend"><span><i class="l-unv"></i>unvisited</span><span><i class="l-vis"></i>visited</span><span><i class="l-cur"></i>current (stack top)</span></div>
-        <div class="trace-grid">
-          <div class="graph-diagram">
-          <svg class="gsvg" width="400" height="200" viewBox="0 0 520 260">
-            <line class="gedge path" x1="260" y1="40" x2="120" y2="130"/>
-            <line class="gedge" x1="260" y1="40" x2="400" y2="130"/>
-            <line class="gedge" x1="120" y1="130" x2="260" y2="220"/>
-            <line class="gedge" x1="400" y1="130" x2="260" y2="220"/>
-            <line class="gedge" x1="400" y1="130" x2="460" y2="220"/>
-            <line class="gedge" x1="260" y1="220" x2="460" y2="220"/>
             <line class="backtrack-line" x1="260" y1="220" x2="120" y2="130" marker-end="url(#backArrow)"/>
             <g class="gnode visited"><circle cx="260" cy="40" r="26"/><text x="260" y="41">Ann</text></g>
             <g class="gnode current"><circle cx="120" cy="130" r="26"/><text x="120" y="131">Ben</text></g>
-            <g class="gnode visited"><circle cx="400" cy="130" r="26"/><text x="400" y="131">Cam</text></g>
+            <g class="gnode"><circle cx="400" cy="130" r="26"/><text x="400" y="131">Cam</text></g>
             <g class="gnode popped"><circle cx="260" cy="220" r="26"/><text x="260" y="221">Dee</text></g>
-            <g class="gnode visited"><circle cx="460" cy="220" r="26"/><text x="460" y="221">Eli</text></g>
+            <g class="gnode"><circle cx="460" cy="220" r="26"/><text x="460" y="221">Eli</text></g>
           </svg>
         </div>
           <div class="side-panel">
@@ -497,25 +354,24 @@
       </section>
 
       <section class="slide">
-        <h2 class="slide-title">DFS — Step 9: Dead End at Ben — Pop and Backtrack</h2>
-        <p class="slide-sub">Back at Ben: its neighbors (Ann, Dee) are <b>all visited</b> too. <b>Pop Ben off the stack</b> and backtrack further, to Ann.</p>
-        <div class="result-strip"><b>DFS output so far:</b> Ann → Ben → Dee → Cam → Eli</div>
+        <h2 class="slide-title">DFS — Step 5: Dead End at Ben — Pop and Backtrack</h2>
+        <p class="slide-sub">Back at Ben: its neighbors (Ann, Dee) are <b>all visited</b> too — still no unvisited vertex to try. <b>Pop Ben off the stack</b> and backtrack further, to Ann.</p>
+        <div class="result-strip"><b>DFS output so far:</b> Ann → Ben → Dee</div>
         <div class="legend"><span><i class="l-unv"></i>unvisited</span><span><i class="l-vis"></i>visited</span><span><i class="l-cur"></i>current (stack top)</span></div>
         <div class="trace-grid">
           <div class="graph-diagram">
           <svg class="gsvg" width="400" height="200" viewBox="0 0 520 260">
-            <line class="gedge" x1="260" y1="40" x2="120" y2="130"/>
+            <line class="gedge path" x1="260" y1="40" x2="120" y2="130"/>
             <line class="gedge" x1="260" y1="40" x2="400" y2="130"/>
-            <line class="gedge" x1="120" y1="130" x2="260" y2="220"/>
-            <line class="gedge" x1="400" y1="130" x2="260" y2="220"/>
+            <line class="gedge" x1="260" y1="40" x2="260" y2="220"/>
+            <line class="gedge path" x1="120" y1="130" x2="260" y2="220"/>
             <line class="gedge" x1="400" y1="130" x2="460" y2="220"/>
-            <line class="gedge" x1="260" y1="220" x2="460" y2="220"/>
             <line class="backtrack-line" x1="120" y1="130" x2="260" y2="40" marker-end="url(#backArrow)"/>
             <g class="gnode current"><circle cx="260" cy="40" r="26"/><text x="260" y="41">Ann</text></g>
             <g class="gnode popped"><circle cx="120" cy="130" r="26"/><text x="120" y="131">Ben</text></g>
-            <g class="gnode visited"><circle cx="400" cy="130" r="26"/><text x="400" y="131">Cam</text></g>
+            <g class="gnode"><circle cx="400" cy="130" r="26"/><text x="400" y="131">Cam</text></g>
             <g class="gnode visited"><circle cx="260" cy="220" r="26"/><text x="260" y="221">Dee</text></g>
-            <g class="gnode visited"><circle cx="460" cy="220" r="26"/><text x="460" y="221">Eli</text></g>
+            <g class="gnode"><circle cx="460" cy="220" r="26"/><text x="460" y="221">Eli</text></g>
           </svg>
         </div>
           <div class="side-panel">
@@ -529,19 +385,144 @@
       </section>
 
       <section class="slide">
+        <h2 class="slide-title">DFS — Step 6: Top = Ann → go to Cam</h2>
+        <p class="slide-sub">Back at Ann, there's still an unvisited neighbor left: <b>Cam</b> (Ben and Dee are already visited). This is exactly why DFS backs up <i>one vertex at a time</i> instead of all the way to the start — Ann still had work left to do. Visit Cam, print, push.</p>
+        <div class="result-strip"><b>DFS output so far:</b> Ann → Ben → Dee → Cam</div>
+        <div class="legend"><span><i class="l-unv"></i>unvisited</span><span><i class="l-vis"></i>visited</span><span><i class="l-cur"></i>current (stack top)</span></div>
+        <div class="trace-grid">
+          <div class="graph-diagram">
+          <svg class="gsvg" width="400" height="200" viewBox="0 0 520 260">
+            <line class="gedge path" x1="260" y1="40" x2="120" y2="130"/>
+            <line class="gedge path" x1="260" y1="40" x2="400" y2="130"/>
+            <line class="gedge" x1="260" y1="40" x2="260" y2="220"/>
+            <line class="gedge path" x1="120" y1="130" x2="260" y2="220"/>
+            <line class="gedge" x1="400" y1="130" x2="460" y2="220"/>
+            <g class="gnode visited"><circle cx="260" cy="40" r="26"/><text x="260" y="41">Ann</text></g>
+            <g class="gnode visited"><circle cx="120" cy="130" r="26"/><text x="120" y="131">Ben</text></g>
+            <g class="gnode current"><circle cx="400" cy="130" r="26"/><text x="400" y="131">Cam</text></g>
+            <g class="gnode visited"><circle cx="260" cy="220" r="26"/><text x="260" y="221">Dee</text></g>
+            <g class="gnode"><circle cx="460" cy="220" r="26"/><text x="460" y="221">Eli</text></g>
+          </svg>
+        </div>
+          <div class="side-panel">
+            <div class="ptr-cap">stack (grows upward)</div>
+            <div class="stackv">
+          <div class="stackbox"><div class="ptr-sub">Ann</div></div>
+          <div class="stackbox top"><div class="ptr-sub">Cam</div></div>
+        </div>
+            <div class="stack-floor"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide">
+        <h2 class="slide-title">DFS — Step 7: Top = Cam → go to Eli</h2>
+        <p class="slide-sub">Cam's unvisited neighbors: Eli (Ann already visited). Visit, print, push.</p>
+        <div class="result-strip"><b>DFS output so far:</b> Ann → Ben → Dee → Cam → Eli</div>
+        <div class="legend"><span><i class="l-unv"></i>unvisited</span><span><i class="l-vis"></i>visited</span><span><i class="l-cur"></i>current (stack top)</span></div>
+        <div class="trace-grid">
+          <div class="graph-diagram">
+          <svg class="gsvg" width="400" height="200" viewBox="0 0 520 260">
+            <line class="gedge path" x1="260" y1="40" x2="120" y2="130"/>
+            <line class="gedge path" x1="260" y1="40" x2="400" y2="130"/>
+            <line class="gedge" x1="260" y1="40" x2="260" y2="220"/>
+            <line class="gedge path" x1="120" y1="130" x2="260" y2="220"/>
+            <line class="gedge path" x1="400" y1="130" x2="460" y2="220"/>
+            <g class="gnode visited"><circle cx="260" cy="40" r="26"/><text x="260" y="41">Ann</text></g>
+            <g class="gnode visited"><circle cx="120" cy="130" r="26"/><text x="120" y="131">Ben</text></g>
+            <g class="gnode visited"><circle cx="400" cy="130" r="26"/><text x="400" y="131">Cam</text></g>
+            <g class="gnode visited"><circle cx="260" cy="220" r="26"/><text x="260" y="221">Dee</text></g>
+            <g class="gnode current"><circle cx="460" cy="220" r="26"/><text x="460" y="221">Eli</text></g>
+          </svg>
+        </div>
+          <div class="side-panel">
+            <div class="ptr-cap">stack (grows upward)</div>
+            <div class="stackv">
+          <div class="stackbox"><div class="ptr-sub">Ann</div></div>
+          <div class="stackbox"><div class="ptr-sub">Cam</div></div>
+          <div class="stackbox top"><div class="ptr-sub">Eli</div></div>
+        </div>
+            <div class="stack-floor"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide">
+        <h2 class="slide-title">DFS — Step 8: Dead End at Eli — Pop and Backtrack</h2>
+        <p class="slide-sub">Eli's only neighbor (Cam) is <b>already visited</b> — a dead end. <b>Pop Eli off the stack</b> and backtrack to Cam.</p>
+        <div class="result-strip"><b>DFS output so far:</b> Ann → Ben → Dee → Cam → Eli</div>
+        <div class="legend"><span><i class="l-unv"></i>unvisited</span><span><i class="l-vis"></i>visited</span><span><i class="l-cur"></i>current (stack top)</span></div>
+        <div class="trace-grid">
+          <div class="graph-diagram">
+          <svg class="gsvg" width="400" height="200" viewBox="0 0 520 260">
+            <line class="gedge path" x1="260" y1="40" x2="120" y2="130"/>
+            <line class="gedge path" x1="260" y1="40" x2="400" y2="130"/>
+            <line class="gedge" x1="260" y1="40" x2="260" y2="220"/>
+            <line class="gedge path" x1="120" y1="130" x2="260" y2="220"/>
+            <line class="gedge path" x1="400" y1="130" x2="460" y2="220"/>
+            <line class="backtrack-line" x1="460" y1="220" x2="400" y2="130" marker-end="url(#backArrow)"/>
+            <g class="gnode visited"><circle cx="260" cy="40" r="26"/><text x="260" y="41">Ann</text></g>
+            <g class="gnode visited"><circle cx="120" cy="130" r="26"/><text x="120" y="131">Ben</text></g>
+            <g class="gnode current"><circle cx="400" cy="130" r="26"/><text x="400" y="131">Cam</text></g>
+            <g class="gnode visited"><circle cx="260" cy="220" r="26"/><text x="260" y="221">Dee</text></g>
+            <g class="gnode popped"><circle cx="460" cy="220" r="26"/><text x="460" y="221">Eli</text></g>
+          </svg>
+        </div>
+          <div class="side-panel">
+            <div class="pop-label">↩ pop Eli → backtrack to Cam</div>
+            <div class="ptr-cap">stack (grows upward)</div>
+            <div class="stackv">
+          <div class="stackbox"><div class="ptr-sub">Ann</div></div>
+          <div class="stackbox top"><div class="ptr-sub">Cam</div></div>
+        </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide">
+        <h2 class="slide-title">DFS — Step 9: Dead End at Cam — Pop and Backtrack</h2>
+        <p class="slide-sub">Back at Cam: its neighbors (Ann, Eli) are <b>all visited</b> too. <b>Pop Cam off the stack</b> and backtrack further, to Ann.</p>
+        <div class="result-strip"><b>DFS output so far:</b> Ann → Ben → Dee → Cam → Eli</div>
+        <div class="legend"><span><i class="l-unv"></i>unvisited</span><span><i class="l-vis"></i>visited</span><span><i class="l-cur"></i>current (stack top)</span></div>
+        <div class="trace-grid">
+          <div class="graph-diagram">
+          <svg class="gsvg" width="400" height="200" viewBox="0 0 520 260">
+            <line class="gedge path" x1="260" y1="40" x2="120" y2="130"/>
+            <line class="gedge path" x1="260" y1="40" x2="400" y2="130"/>
+            <line class="gedge" x1="260" y1="40" x2="260" y2="220"/>
+            <line class="gedge path" x1="120" y1="130" x2="260" y2="220"/>
+            <line class="gedge path" x1="400" y1="130" x2="460" y2="220"/>
+            <line class="backtrack-line" x1="400" y1="130" x2="260" y2="40" marker-end="url(#backArrow)"/>
+            <g class="gnode current"><circle cx="260" cy="40" r="26"/><text x="260" y="41">Ann</text></g>
+            <g class="gnode visited"><circle cx="120" cy="130" r="26"/><text x="120" y="131">Ben</text></g>
+            <g class="gnode popped"><circle cx="400" cy="130" r="26"/><text x="400" y="131">Cam</text></g>
+            <g class="gnode visited"><circle cx="260" cy="220" r="26"/><text x="260" y="221">Dee</text></g>
+            <g class="gnode visited"><circle cx="460" cy="220" r="26"/><text x="460" y="221">Eli</text></g>
+          </svg>
+        </div>
+          <div class="side-panel">
+            <div class="pop-label">↩ pop Cam → backtrack to Ann</div>
+            <div class="ptr-cap">stack (grows upward)</div>
+            <div class="stackv">
+          <div class="stackbox top"><div class="ptr-sub">Ann</div></div>
+        </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide">
         <h2 class="slide-title">DFS — Step 10: Pop Ann — Stack Empty, DFS Done</h2>
-        <p class="slide-sub">Back at Ann: its neighbors (Ben, Cam) are <b>all visited</b> too, and there's no vertex left below it on the stack to backtrack to. <b>Pop Ann</b> — the stack is now empty, so DFS stops.</p>
+        <p class="slide-sub">Back at Ann: its neighbors (Ben, Cam, Dee) are <b>all visited</b> too, and there's no vertex left below it on the stack to backtrack to. <b>Pop Ann</b> — the stack is now empty, so DFS stops.</p>
         <div class="result-strip"><b>DFS output so far:</b> Ann → Ben → Dee → Cam → Eli</div>
         <div class="legend"><span><i class="l-unv"></i>unvisited</span><span><i class="l-vis"></i>visited</span></div>
         <div class="trace-grid">
           <div class="graph-diagram">
           <svg class="gsvg" width="400" height="200" viewBox="0 0 520 260">
-            <line class="gedge" x1="260" y1="40" x2="120" y2="130"/>
-            <line class="gedge" x1="260" y1="40" x2="400" y2="130"/>
-            <line class="gedge" x1="120" y1="130" x2="260" y2="220"/>
-            <line class="gedge" x1="400" y1="130" x2="260" y2="220"/>
-            <line class="gedge" x1="400" y1="130" x2="460" y2="220"/>
-            <line class="gedge" x1="260" y1="220" x2="460" y2="220"/>
+            <line class="gedge path" x1="260" y1="40" x2="120" y2="130"/>
+            <line class="gedge path" x1="260" y1="40" x2="400" y2="130"/>
+            <line class="gedge" x1="260" y1="40" x2="260" y2="220"/>
+            <line class="gedge path" x1="120" y1="130" x2="260" y2="220"/>
+            <line class="gedge path" x1="400" y1="130" x2="460" y2="220"/>
             <g class="gnode popped"><circle cx="260" cy="40" r="26"/><text x="260" y="41">Ann</text></g>
             <g class="gnode visited"><circle cx="120" cy="130" r="26"/><text x="120" y="131">Ben</text></g>
             <g class="gnode visited"><circle cx="400" cy="130" r="26"/><text x="400" y="131">Cam</text></g>
@@ -560,10 +541,10 @@
       <section class="slide">
         <h2 class="slide-title">DFS Result</h2>
         <p class="slide-sub">&nbsp;</p>
-        <div class="flow-box shaded"><div class="fb-main">Ann → Ben → Dee → Cam → Eli</div><div class="fb-sub">one long path dug all the way down, then backed out</div></div>
+        <div class="flow-box shaded"><div class="fb-main">Ann → Ben → Dee → Cam → Eli</div><div class="fb-sub">dug down two levels, backtracked two steps, then branched into a second path</div></div>
       </section>
 
-      <!-- ===================== BFS TRACE SLIDES 10-15 ===================== -->
+      <!-- ===================== BFS TRACE SLIDES 14-19 ===================== -->
       <section class="slide">
         <h2 class="slide-title">BFS — Step 1: Visit Ann</h2>
         <p class="slide-sub">Mark Ann visited, print her, enqueue her.</p>
@@ -574,10 +555,9 @@
           <svg class="gsvg" width="400" height="200" viewBox="0 0 520 260">
             <line class="gedge" x1="260" y1="40" x2="120" y2="130"/>
             <line class="gedge" x1="260" y1="40" x2="400" y2="130"/>
+            <line class="gedge" x1="260" y1="40" x2="260" y2="220"/>
             <line class="gedge" x1="120" y1="130" x2="260" y2="220"/>
-            <line class="gedge" x1="400" y1="130" x2="260" y2="220"/>
             <line class="gedge" x1="400" y1="130" x2="460" y2="220"/>
-            <line class="gedge" x1="260" y1="220" x2="460" y2="220"/>
             <g class="gnode current"><circle cx="260" cy="40" r="26"/><text x="260" y="41">Ann</text></g>
             <g class="gnode"><circle cx="120" cy="130" r="26"/><text x="120" y="131">Ben</text></g>
             <g class="gnode"><circle cx="400" cy="130" r="26"/><text x="400" y="131">Cam</text></g>
@@ -594,35 +574,7 @@
 
       <section class="slide">
         <h2 class="slide-title">BFS — Step 2: Dequeue Ann → visit ALL her neighbors</h2>
-        <p class="slide-sub">Ann's unvisited neighbors: Ben, Cam — visit, print, and enqueue BOTH before moving on.</p>
-        <div class="result-strip"><b>BFS output so far:</b> Ann → Ben → Cam</div>
-        <div class="legend"><span><i class="l-unv"></i>unvisited</span><span><i class="l-vis"></i>visited</span><span><i class="l-cur"></i>current</span></div>
-        <div class="trace-grid">
-          <div class="graph-diagram">
-          <svg class="gsvg" width="400" height="200" viewBox="0 0 520 260">
-            <line class="gedge path" x1="260" y1="40" x2="120" y2="130"/>
-            <line class="gedge path" x1="260" y1="40" x2="400" y2="130"/>
-            <line class="gedge" x1="120" y1="130" x2="260" y2="220"/>
-            <line class="gedge" x1="400" y1="130" x2="260" y2="220"/>
-            <line class="gedge" x1="400" y1="130" x2="460" y2="220"/>
-            <line class="gedge" x1="260" y1="220" x2="460" y2="220"/>
-            <g class="gnode visited"><circle cx="260" cy="40" r="26"/><text x="260" y="41">Ann</text></g>
-            <g class="gnode current"><circle cx="120" cy="130" r="26"/><text x="120" y="131">Ben</text></g>
-            <g class="gnode current"><circle cx="400" cy="130" r="26"/><text x="400" y="131">Cam</text></g>
-            <g class="gnode"><circle cx="260" cy="220" r="26"/><text x="260" y="221">Dee</text></g>
-            <g class="gnode"><circle cx="460" cy="220" r="26"/><text x="460" y="221">Eli</text></g>
-          </svg>
-        </div>
-          <div class="side-panel">
-            <div class="ptr-cap">queue (front → back)</div>
-            <div class="ptr-row"><div class="ptr visiting"><div class="ptr-sub">Ben</div></div><div class="ptr visiting"><div class="ptr-sub">Cam</div></div></div>
-          </div>
-        </div>
-      </section>
-
-      <section class="slide">
-        <h2 class="slide-title">BFS — Step 3: Dequeue Ben → visit his unvisited neighbors</h2>
-        <p class="slide-sub">Ben's unvisited neighbors: Dee (Ann already visited). Visit, print, enqueue.</p>
+        <p class="slide-sub">Ann's unvisited neighbors: Ben, Cam, Dee — visit, print, and enqueue ALL THREE before moving on.</p>
         <div class="result-strip"><b>BFS output so far:</b> Ann → Ben → Cam → Dee</div>
         <div class="legend"><span><i class="l-unv"></i>unvisited</span><span><i class="l-vis"></i>visited</span><span><i class="l-cur"></i>current</span></div>
         <div class="trace-grid">
@@ -630,18 +582,45 @@
           <svg class="gsvg" width="400" height="200" viewBox="0 0 520 260">
             <line class="gedge path" x1="260" y1="40" x2="120" y2="130"/>
             <line class="gedge path" x1="260" y1="40" x2="400" y2="130"/>
-            <line class="gedge path" x1="120" y1="130" x2="260" y2="220"/>
-            <line class="gedge" x1="400" y1="130" x2="260" y2="220"/>
+            <line class="gedge path" x1="260" y1="40" x2="260" y2="220"/>
+            <line class="gedge" x1="120" y1="130" x2="260" y2="220"/>
             <line class="gedge" x1="400" y1="130" x2="460" y2="220"/>
-            <line class="gedge" x1="260" y1="220" x2="460" y2="220"/>
             <g class="gnode visited"><circle cx="260" cy="40" r="26"/><text x="260" y="41">Ann</text></g>
-            <g class="gnode visited"><circle cx="120" cy="130" r="26"/><text x="120" y="131">Ben</text></g>
-            <g class="gnode visited"><circle cx="400" cy="130" r="26"/><text x="400" y="131">Cam</text></g>
+            <g class="gnode current"><circle cx="120" cy="130" r="26"/><text x="120" y="131">Ben</text></g>
+            <g class="gnode current"><circle cx="400" cy="130" r="26"/><text x="400" y="131">Cam</text></g>
             <g class="gnode current"><circle cx="260" cy="220" r="26"/><text x="260" y="221">Dee</text></g>
             <g class="gnode"><circle cx="460" cy="220" r="26"/><text x="460" y="221">Eli</text></g>
           </svg>
         </div>
           <div class="side-panel">
+            <div class="ptr-cap">queue (front → back)</div>
+            <div class="ptr-row"><div class="ptr visiting"><div class="ptr-sub">Ben</div></div><div class="ptr visiting"><div class="ptr-sub">Cam</div></div><div class="ptr visiting"><div class="ptr-sub">Dee</div></div></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide">
+        <h2 class="slide-title">BFS — Step 3: Dequeue Ben — Nothing New</h2>
+        <p class="slide-sub">Ben's neighbors (Ann, Dee) are <b>both already visited or queued</b>. Dequeue Ben from the front — nothing new to add.</p>
+        <div class="result-strip"><b>BFS output so far:</b> Ann → Ben → Cam → Dee</div>
+        <div class="legend"><span><i class="l-unv"></i>unvisited</span><span><i class="l-vis"></i>visited</span><span><i class="l-cur"></i>current</span></div>
+        <div class="trace-grid">
+          <div class="graph-diagram">
+          <svg class="gsvg" width="400" height="200" viewBox="0 0 520 260">
+            <line class="gedge path" x1="260" y1="40" x2="120" y2="130"/>
+            <line class="gedge path" x1="260" y1="40" x2="400" y2="130"/>
+            <line class="gedge path" x1="260" y1="40" x2="260" y2="220"/>
+            <line class="gedge" x1="120" y1="130" x2="260" y2="220"/>
+            <line class="gedge" x1="400" y1="130" x2="460" y2="220"/>
+            <g class="gnode visited"><circle cx="260" cy="40" r="26"/><text x="260" y="41">Ann</text></g>
+            <g class="gnode current"><circle cx="120" cy="130" r="26"/><text x="120" y="131">Ben</text></g>
+            <g class="gnode visited"><circle cx="400" cy="130" r="26"/><text x="400" y="131">Cam</text></g>
+            <g class="gnode visited"><circle cx="260" cy="220" r="26"/><text x="260" y="221">Dee</text></g>
+            <g class="gnode"><circle cx="460" cy="220" r="26"/><text x="460" y="221">Eli</text></g>
+          </svg>
+        </div>
+          <div class="side-panel">
+            <div class="pop-label">dequeued: Ben — nothing new to add</div>
             <div class="ptr-cap">queue (front → back)</div>
             <div class="ptr-row"><div class="ptr visiting"><div class="ptr-sub">Cam</div></div><div class="ptr"><div class="ptr-sub">Dee</div></div></div>
           </div>
@@ -649,8 +628,8 @@
       </section>
 
       <section class="slide">
-        <h2 class="slide-title">BFS — Step 4: Dequeue Cam → visit his unvisited neighbors</h2>
-        <p class="slide-sub">Cam's unvisited neighbors: Eli (Ann, Dee already visited/queued). Visit, print, enqueue.</p>
+        <h2 class="slide-title">BFS — Step 4: Dequeue Cam → visit his unvisited neighbor</h2>
+        <p class="slide-sub">Cam's unvisited neighbors: Eli (Ann already visited). Visit, print, enqueue.</p>
         <div class="result-strip"><b>BFS output so far:</b> Ann → Ben → Cam → Dee → Eli</div>
         <div class="legend"><span><i class="l-unv"></i>unvisited</span><span><i class="l-vis"></i>visited</span><span><i class="l-cur"></i>current</span></div>
         <div class="trace-grid">
@@ -658,13 +637,12 @@
           <svg class="gsvg" width="400" height="200" viewBox="0 0 520 260">
             <line class="gedge path" x1="260" y1="40" x2="120" y2="130"/>
             <line class="gedge path" x1="260" y1="40" x2="400" y2="130"/>
-            <line class="gedge path" x1="120" y1="130" x2="260" y2="220"/>
-            <line class="gedge" x1="400" y1="130" x2="260" y2="220"/>
+            <line class="gedge path" x1="260" y1="40" x2="260" y2="220"/>
+            <line class="gedge" x1="120" y1="130" x2="260" y2="220"/>
             <line class="gedge path" x1="400" y1="130" x2="460" y2="220"/>
-            <line class="gedge" x1="260" y1="220" x2="460" y2="220"/>
             <g class="gnode visited"><circle cx="260" cy="40" r="26"/><text x="260" y="41">Ann</text></g>
             <g class="gnode visited"><circle cx="120" cy="130" r="26"/><text x="120" y="131">Ben</text></g>
-            <g class="gnode visited"><circle cx="400" cy="130" r="26"/><text x="400" y="131">Cam</text></g>
+            <g class="gnode current"><circle cx="400" cy="130" r="26"/><text x="400" y="131">Cam</text></g>
             <g class="gnode visited"><circle cx="260" cy="220" r="26"/><text x="260" y="221">Dee</text></g>
             <g class="gnode current"><circle cx="460" cy="220" r="26"/><text x="460" y="221">Eli</text></g>
           </svg>
@@ -678,7 +656,7 @@
 
       <section class="slide">
         <h2 class="slide-title">BFS — Step 5: Dequeue Dee — Nothing New</h2>
-        <p class="slide-sub">Dee's neighbors (Ben, Cam, Eli) are <b>all already visited or queued</b>. Dequeue Dee from the front — nothing new to add.</p>
+        <p class="slide-sub">Dee's neighbors (Ann, Ben) are <b>all already visited</b>. Dequeue Dee from the front — nothing new to add.</p>
         <div class="result-strip"><b>BFS output so far:</b> Ann → Ben → Cam → Dee → Eli</div>
         <div class="legend"><span><i class="l-unv"></i>unvisited</span><span><i class="l-vis"></i>visited</span><span><i class="l-cur"></i>current</span></div>
         <div class="trace-grid">
@@ -686,10 +664,9 @@
           <svg class="gsvg" width="400" height="200" viewBox="0 0 520 260">
             <line class="gedge path" x1="260" y1="40" x2="120" y2="130"/>
             <line class="gedge path" x1="260" y1="40" x2="400" y2="130"/>
-            <line class="gedge path" x1="120" y1="130" x2="260" y2="220"/>
-            <line class="gedge" x1="400" y1="130" x2="260" y2="220"/>
+            <line class="gedge path" x1="260" y1="40" x2="260" y2="220"/>
+            <line class="gedge" x1="120" y1="130" x2="260" y2="220"/>
             <line class="gedge path" x1="400" y1="130" x2="460" y2="220"/>
-            <line class="gedge" x1="260" y1="220" x2="460" y2="220"/>
             <g class="gnode visited"><circle cx="260" cy="40" r="26"/><text x="260" y="41">Ann</text></g>
             <g class="gnode visited"><circle cx="120" cy="130" r="26"/><text x="120" y="131">Ben</text></g>
             <g class="gnode visited"><circle cx="400" cy="130" r="26"/><text x="400" y="131">Cam</text></g>
@@ -707,7 +684,7 @@
 
       <section class="slide">
         <h2 class="slide-title">BFS — Step 6: Dequeue Eli — Queue Empties, BFS Done</h2>
-        <p class="slide-sub">Eli's neighbors (Cam, Dee) are <b>all already visited</b>. Dequeue Eli — the queue is now empty, so BFS stops.</p>
+        <p class="slide-sub">Eli's only neighbor (Cam) is <b>already visited</b>. Dequeue Eli — the queue is now empty, so BFS stops.</p>
         <div class="result-strip"><b>BFS output so far:</b> Ann → Ben → Cam → Dee → Eli</div>
         <div class="legend"><span><i class="l-unv"></i>unvisited</span><span><i class="l-vis"></i>visited</span><span><i class="l-cur"></i>current</span></div>
         <div class="trace-grid">
@@ -715,10 +692,9 @@
           <svg class="gsvg" width="400" height="200" viewBox="0 0 520 260">
             <line class="gedge path" x1="260" y1="40" x2="120" y2="130"/>
             <line class="gedge path" x1="260" y1="40" x2="400" y2="130"/>
-            <line class="gedge path" x1="120" y1="130" x2="260" y2="220"/>
-            <line class="gedge" x1="400" y1="130" x2="260" y2="220"/>
+            <line class="gedge path" x1="260" y1="40" x2="260" y2="220"/>
+            <line class="gedge" x1="120" y1="130" x2="260" y2="220"/>
             <line class="gedge path" x1="400" y1="130" x2="460" y2="220"/>
-            <line class="gedge" x1="260" y1="220" x2="460" y2="220"/>
             <g class="gnode visited"><circle cx="260" cy="40" r="26"/><text x="260" y="41">Ann</text></g>
             <g class="gnode visited"><circle cx="120" cy="130" r="26"/><text x="120" y="131">Ben</text></g>
             <g class="gnode visited"><circle cx="400" cy="130" r="26"/><text x="400" y="131">Cam</text></g>
@@ -728,7 +704,7 @@
         </div>
           <div class="side-panel">
             <div class="pop-label">dequeued: Eli — queue is empty, traversal complete</div>
-            <div class="ptr-cap">queue</div>
+            <div class="ptr-cap">queue (front → back)</div>
             <div class="ptr-row"><div class="ptr"><div class="ptr-sub">empty</div></div></div>
           </div>
         </div>
@@ -737,7 +713,7 @@
       <section class="slide">
         <h2 class="slide-title">BFS Result</h2>
         <p class="slide-sub">&nbsp;</p>
-        <div class="flow-box shaded"><div class="fb-main">Ann → Ben, Cam → Dee, Eli</div><div class="fb-sub">visited level by level — note it's a <i>different</i> order than DFS!</div></div>
+        <div class="flow-box shaded"><div class="fb-main">Ann → Ben, Cam, Dee → Eli</div><div class="fb-sub">visited level by level — note it's a <i>different</i> order than DFS!</div></div>
       </section>
 
       <!-- ===================== SLIDE 16 ===================== -->

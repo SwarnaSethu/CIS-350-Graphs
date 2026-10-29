@@ -233,7 +233,7 @@
               <li><b>Vertex</b> (or node) — one "thing" in the graph. Plural: <i>vertices</i>.</li>
               <li><b>Edge</b> — a connection between two vertices.</li>
               <li><b>Adjacent</b> — two vertices connected by an edge are adjacent (neighbors).</li>
-              <li><b>Degree</b> — how many neighbors a vertex has. (Cam has degree 3: Ann, Dee, Eli.)</li>
+              <li><b>Degree</b> — how many neighbors a vertex has. (Ann has degree 3: Ben, Cam, Dee.)</li>
               <li><b>Undirected</b> graph — edges go both ways (friendship).</li>
               <li><b>Directed</b> graph — edges are one-way (following someone on social media without them following back).</li>
               <li>This class: <b>undirected, unweighted</b> graphs only.</li>
@@ -294,10 +294,9 @@
           <svg class="gsvg" width="360" height="180" viewBox="0 0 520 260">
             <line class="gedge" x1="260" y1="40" x2="120" y2="130"/>
             <line class="gedge" x1="260" y1="40" x2="400" y2="130"/>
+            <line class="gedge" x1="260" y1="40" x2="260" y2="220"/>
             <line class="gedge" x1="120" y1="130" x2="260" y2="220"/>
-            <line class="gedge" x1="400" y1="130" x2="260" y2="220"/>
             <line class="gedge" x1="400" y1="130" x2="460" y2="220"/>
-            <line class="gedge" x1="260" y1="220" x2="460" y2="220"/>
             <g class="gnode"><circle cx="260" cy="40" r="26"/><text x="260" y="41">Ann</text></g>
             <g class="gnode"><circle cx="120" cy="130" r="26"/><text x="120" y="131">Ben</text></g>
             <g class="gnode"><circle cx="400" cy="130" r="26"/><text x="400" y="131">Cam</text></g>
@@ -331,10 +330,9 @@
           <svg class="gsvg" width="360" height="180" viewBox="0 0 520 260">
             <line class="gedge checked" x1="260" y1="40" x2="120" y2="130"/>
             <line class="gedge" x1="260" y1="40" x2="400" y2="130"/>
+            <line class="gedge" x1="260" y1="40" x2="260" y2="220"/>
             <line class="gedge" x1="120" y1="130" x2="260" y2="220"/>
-            <line class="gedge" x1="400" y1="130" x2="260" y2="220"/>
             <line class="gedge" x1="400" y1="130" x2="460" y2="220"/>
-            <line class="gedge" x1="260" y1="220" x2="460" y2="220"/>
             <g class="gnode checking"><circle cx="260" cy="40" r="26"/><text x="260" y="41">Ann</text></g>
             <g class="gnode checking"><circle cx="120" cy="130" r="26"/><text x="120" y="131">Ben</text></g>
             <g class="gnode"><circle cx="400" cy="130" r="26"/><text x="400" y="131">Cam</text></g>
@@ -368,10 +366,9 @@
           <svg class="gsvg" width="360" height="180" viewBox="0 0 520 260">
             <line class="gedge" x1="260" y1="40" x2="120" y2="130"/>
             <line class="gedge checked" x1="260" y1="40" x2="400" y2="130"/>
+            <line class="gedge" x1="260" y1="40" x2="260" y2="220"/>
             <line class="gedge" x1="120" y1="130" x2="260" y2="220"/>
-            <line class="gedge" x1="400" y1="130" x2="260" y2="220"/>
             <line class="gedge" x1="400" y1="130" x2="460" y2="220"/>
-            <line class="gedge" x1="260" y1="220" x2="460" y2="220"/>
             <g class="gnode checking"><circle cx="260" cy="40" r="26"/><text x="260" y="41">Ann</text></g>
             <g class="gnode"><circle cx="120" cy="130" r="26"/><text x="120" y="131">Ben</text></g>
             <g class="gnode checking"><circle cx="400" cy="130" r="26"/><text x="400" y="131">Cam</text></g>
@@ -400,15 +397,14 @@
 
       <section class="slide">
         <h2 class="slide-title">8 — Checking Ann — Dee</h2>
-        <p class="slide-sub">Ann and Dee are NOT connected — write 0 in both [Ann,Dee] and [Dee,Ann].</p>
+        <p class="slide-sub">Ann and Dee ARE connected — write 1 in both [Ann,Dee] and [Dee,Ann].</p>
         <div class="graph-diagram small">
           <svg class="gsvg" width="360" height="180" viewBox="0 0 520 260">
             <line class="gedge" x1="260" y1="40" x2="120" y2="130"/>
             <line class="gedge" x1="260" y1="40" x2="400" y2="130"/>
+            <line class="gedge checked" x1="260" y1="40" x2="260" y2="220"/>
             <line class="gedge" x1="120" y1="130" x2="260" y2="220"/>
-            <line class="gedge" x1="400" y1="130" x2="260" y2="220"/>
             <line class="gedge" x1="400" y1="130" x2="460" y2="220"/>
-            <line class="gedge" x1="260" y1="220" x2="460" y2="220"/>
             <g class="gnode checking"><circle cx="260" cy="40" r="26"/><text x="260" y="41">Ann</text></g>
             <g class="gnode"><circle cx="120" cy="130" r="26"/><text x="120" y="131">Ben</text></g>
             <g class="gnode"><circle cx="400" cy="130" r="26"/><text x="400" y="131">Cam</text></g>
@@ -420,16 +416,16 @@
           <div class="panel">
             <table class="minitable">
               <tr><th></th><th>Ann</th><th>Ben</th><th>Cam</th><th>Dee</th><th>Eli</th></tr>
-            <tr><td class="rowhead">Ann</td><td class="diag">0</td><td class="one">1</td><td class="one">1</td><td class="zero newcell">0</td><td class="undetermined">&middot;</td></tr>
+            <tr><td class="rowhead">Ann</td><td class="diag">0</td><td class="one">1</td><td class="one">1</td><td class="one newcell">1</td><td class="undetermined">&middot;</td></tr>
             <tr><td class="rowhead">Ben</td><td class="one">1</td><td class="diag">0</td><td class="undetermined">&middot;</td><td class="undetermined">&middot;</td><td class="undetermined">&middot;</td></tr>
             <tr><td class="rowhead">Cam</td><td class="one">1</td><td class="undetermined">&middot;</td><td class="diag">0</td><td class="undetermined">&middot;</td><td class="undetermined">&middot;</td></tr>
-            <tr><td class="rowhead">Dee</td><td class="zero newcell">0</td><td class="undetermined">&middot;</td><td class="undetermined">&middot;</td><td class="diag">0</td><td class="undetermined">&middot;</td></tr>
+            <tr><td class="rowhead">Dee</td><td class="one newcell">1</td><td class="undetermined">&middot;</td><td class="undetermined">&middot;</td><td class="diag">0</td><td class="undetermined">&middot;</td></tr>
             <tr><td class="rowhead">Eli</td><td class="undetermined">&middot;</td><td class="undetermined">&middot;</td><td class="undetermined">&middot;</td><td class="undetermined">&middot;</td><td class="diag">0</td></tr>
             </table>
           </div>
           <div class="panel">
             <ul class="notes">
-              <li>Ann and Dee are NOT connected — write 0 in both [Ann,Dee] and [Dee,Ann].</li>
+              <li>Ann and Dee ARE connected — write 1 in both [Ann,Dee] and [Dee,Ann].</li>
             </ul>
           </div>
         </div>
@@ -442,10 +438,9 @@
           <svg class="gsvg" width="360" height="180" viewBox="0 0 520 260">
             <line class="gedge" x1="260" y1="40" x2="120" y2="130"/>
             <line class="gedge" x1="260" y1="40" x2="400" y2="130"/>
+            <line class="gedge" x1="260" y1="40" x2="260" y2="220"/>
             <line class="gedge" x1="120" y1="130" x2="260" y2="220"/>
-            <line class="gedge" x1="400" y1="130" x2="260" y2="220"/>
             <line class="gedge" x1="400" y1="130" x2="460" y2="220"/>
-            <line class="gedge" x1="260" y1="220" x2="460" y2="220"/>
             <g class="gnode checking"><circle cx="260" cy="40" r="26"/><text x="260" y="41">Ann</text></g>
             <g class="gnode"><circle cx="120" cy="130" r="26"/><text x="120" y="131">Ben</text></g>
             <g class="gnode"><circle cx="400" cy="130" r="26"/><text x="400" y="131">Cam</text></g>
@@ -457,10 +452,10 @@
           <div class="panel">
             <table class="minitable">
               <tr><th></th><th>Ann</th><th>Ben</th><th>Cam</th><th>Dee</th><th>Eli</th></tr>
-            <tr><td class="rowhead">Ann</td><td class="diag">0</td><td class="one">1</td><td class="one">1</td><td class="zero">0</td><td class="zero newcell">0</td></tr>
+            <tr><td class="rowhead">Ann</td><td class="diag">0</td><td class="one">1</td><td class="one">1</td><td class="one">1</td><td class="zero newcell">0</td></tr>
             <tr><td class="rowhead">Ben</td><td class="one">1</td><td class="diag">0</td><td class="undetermined">&middot;</td><td class="undetermined">&middot;</td><td class="undetermined">&middot;</td></tr>
             <tr><td class="rowhead">Cam</td><td class="one">1</td><td class="undetermined">&middot;</td><td class="diag">0</td><td class="undetermined">&middot;</td><td class="undetermined">&middot;</td></tr>
-            <tr><td class="rowhead">Dee</td><td class="zero">0</td><td class="undetermined">&middot;</td><td class="undetermined">&middot;</td><td class="diag">0</td><td class="undetermined">&middot;</td></tr>
+            <tr><td class="rowhead">Dee</td><td class="one">1</td><td class="undetermined">&middot;</td><td class="undetermined">&middot;</td><td class="diag">0</td><td class="undetermined">&middot;</td></tr>
             <tr><td class="rowhead">Eli</td><td class="zero newcell">0</td><td class="undetermined">&middot;</td><td class="undetermined">&middot;</td><td class="undetermined">&middot;</td><td class="diag">0</td></tr>
             </table>
           </div>
@@ -479,10 +474,9 @@
           <svg class="gsvg" width="360" height="180" viewBox="0 0 520 260">
             <line class="gedge" x1="260" y1="40" x2="120" y2="130"/>
             <line class="gedge" x1="260" y1="40" x2="400" y2="130"/>
+            <line class="gedge" x1="260" y1="40" x2="260" y2="220"/>
             <line class="gedge" x1="120" y1="130" x2="260" y2="220"/>
-            <line class="gedge" x1="400" y1="130" x2="260" y2="220"/>
             <line class="gedge" x1="400" y1="130" x2="460" y2="220"/>
-            <line class="gedge" x1="260" y1="220" x2="460" y2="220"/>
             <g class="gnode"><circle cx="260" cy="40" r="26"/><text x="260" y="41">Ann</text></g>
             <g class="gnode checking"><circle cx="120" cy="130" r="26"/><text x="120" y="131">Ben</text></g>
             <g class="gnode checking"><circle cx="400" cy="130" r="26"/><text x="400" y="131">Cam</text></g>
@@ -494,10 +488,10 @@
           <div class="panel">
             <table class="minitable">
               <tr><th></th><th>Ann</th><th>Ben</th><th>Cam</th><th>Dee</th><th>Eli</th></tr>
-            <tr><td class="rowhead">Ann</td><td class="diag">0</td><td class="one">1</td><td class="one">1</td><td class="zero">0</td><td class="zero">0</td></tr>
+            <tr><td class="rowhead">Ann</td><td class="diag">0</td><td class="one">1</td><td class="one">1</td><td class="one">1</td><td class="zero">0</td></tr>
             <tr><td class="rowhead">Ben</td><td class="one">1</td><td class="diag">0</td><td class="zero newcell">0</td><td class="undetermined">&middot;</td><td class="undetermined">&middot;</td></tr>
             <tr><td class="rowhead">Cam</td><td class="one">1</td><td class="zero newcell">0</td><td class="diag">0</td><td class="undetermined">&middot;</td><td class="undetermined">&middot;</td></tr>
-            <tr><td class="rowhead">Dee</td><td class="zero">0</td><td class="undetermined">&middot;</td><td class="undetermined">&middot;</td><td class="diag">0</td><td class="undetermined">&middot;</td></tr>
+            <tr><td class="rowhead">Dee</td><td class="one">1</td><td class="undetermined">&middot;</td><td class="undetermined">&middot;</td><td class="diag">0</td><td class="undetermined">&middot;</td></tr>
             <tr><td class="rowhead">Eli</td><td class="zero">0</td><td class="undetermined">&middot;</td><td class="undetermined">&middot;</td><td class="undetermined">&middot;</td><td class="diag">0</td></tr>
             </table>
           </div>
@@ -516,10 +510,9 @@
           <svg class="gsvg" width="360" height="180" viewBox="0 0 520 260">
             <line class="gedge" x1="260" y1="40" x2="120" y2="130"/>
             <line class="gedge" x1="260" y1="40" x2="400" y2="130"/>
+            <line class="gedge" x1="260" y1="40" x2="260" y2="220"/>
             <line class="gedge checked" x1="120" y1="130" x2="260" y2="220"/>
-            <line class="gedge" x1="400" y1="130" x2="260" y2="220"/>
             <line class="gedge" x1="400" y1="130" x2="460" y2="220"/>
-            <line class="gedge" x1="260" y1="220" x2="460" y2="220"/>
             <g class="gnode"><circle cx="260" cy="40" r="26"/><text x="260" y="41">Ann</text></g>
             <g class="gnode checking"><circle cx="120" cy="130" r="26"/><text x="120" y="131">Ben</text></g>
             <g class="gnode"><circle cx="400" cy="130" r="26"/><text x="400" y="131">Cam</text></g>
@@ -531,10 +524,10 @@
           <div class="panel">
             <table class="minitable">
               <tr><th></th><th>Ann</th><th>Ben</th><th>Cam</th><th>Dee</th><th>Eli</th></tr>
-            <tr><td class="rowhead">Ann</td><td class="diag">0</td><td class="one">1</td><td class="one">1</td><td class="zero">0</td><td class="zero">0</td></tr>
+            <tr><td class="rowhead">Ann</td><td class="diag">0</td><td class="one">1</td><td class="one">1</td><td class="one">1</td><td class="zero">0</td></tr>
             <tr><td class="rowhead">Ben</td><td class="one">1</td><td class="diag">0</td><td class="zero">0</td><td class="one newcell">1</td><td class="undetermined">&middot;</td></tr>
             <tr><td class="rowhead">Cam</td><td class="one">1</td><td class="zero">0</td><td class="diag">0</td><td class="undetermined">&middot;</td><td class="undetermined">&middot;</td></tr>
-            <tr><td class="rowhead">Dee</td><td class="zero">0</td><td class="one newcell">1</td><td class="undetermined">&middot;</td><td class="diag">0</td><td class="undetermined">&middot;</td></tr>
+            <tr><td class="rowhead">Dee</td><td class="one">1</td><td class="one newcell">1</td><td class="undetermined">&middot;</td><td class="diag">0</td><td class="undetermined">&middot;</td></tr>
             <tr><td class="rowhead">Eli</td><td class="zero">0</td><td class="undetermined">&middot;</td><td class="undetermined">&middot;</td><td class="undetermined">&middot;</td><td class="diag">0</td></tr>
             </table>
           </div>
@@ -553,10 +546,9 @@
           <svg class="gsvg" width="360" height="180" viewBox="0 0 520 260">
             <line class="gedge" x1="260" y1="40" x2="120" y2="130"/>
             <line class="gedge" x1="260" y1="40" x2="400" y2="130"/>
+            <line class="gedge" x1="260" y1="40" x2="260" y2="220"/>
             <line class="gedge" x1="120" y1="130" x2="260" y2="220"/>
-            <line class="gedge" x1="400" y1="130" x2="260" y2="220"/>
             <line class="gedge" x1="400" y1="130" x2="460" y2="220"/>
-            <line class="gedge" x1="260" y1="220" x2="460" y2="220"/>
             <g class="gnode"><circle cx="260" cy="40" r="26"/><text x="260" y="41">Ann</text></g>
             <g class="gnode checking"><circle cx="120" cy="130" r="26"/><text x="120" y="131">Ben</text></g>
             <g class="gnode"><circle cx="400" cy="130" r="26"/><text x="400" y="131">Cam</text></g>
@@ -568,10 +560,10 @@
           <div class="panel">
             <table class="minitable">
               <tr><th></th><th>Ann</th><th>Ben</th><th>Cam</th><th>Dee</th><th>Eli</th></tr>
-            <tr><td class="rowhead">Ann</td><td class="diag">0</td><td class="one">1</td><td class="one">1</td><td class="zero">0</td><td class="zero">0</td></tr>
+            <tr><td class="rowhead">Ann</td><td class="diag">0</td><td class="one">1</td><td class="one">1</td><td class="one">1</td><td class="zero">0</td></tr>
             <tr><td class="rowhead">Ben</td><td class="one">1</td><td class="diag">0</td><td class="zero">0</td><td class="one">1</td><td class="zero newcell">0</td></tr>
             <tr><td class="rowhead">Cam</td><td class="one">1</td><td class="zero">0</td><td class="diag">0</td><td class="undetermined">&middot;</td><td class="undetermined">&middot;</td></tr>
-            <tr><td class="rowhead">Dee</td><td class="zero">0</td><td class="one">1</td><td class="undetermined">&middot;</td><td class="diag">0</td><td class="undetermined">&middot;</td></tr>
+            <tr><td class="rowhead">Dee</td><td class="one">1</td><td class="one">1</td><td class="undetermined">&middot;</td><td class="diag">0</td><td class="undetermined">&middot;</td></tr>
             <tr><td class="rowhead">Eli</td><td class="zero">0</td><td class="zero newcell">0</td><td class="undetermined">&middot;</td><td class="undetermined">&middot;</td><td class="diag">0</td></tr>
             </table>
           </div>
@@ -585,15 +577,14 @@
 
       <section class="slide">
         <h2 class="slide-title">13 — Checking Cam — Dee</h2>
-        <p class="slide-sub">Cam and Dee ARE connected — write 1 in both [Cam,Dee] and [Dee,Cam].</p>
+        <p class="slide-sub">Cam and Dee are NOT connected — write 0 in both [Cam,Dee] and [Dee,Cam].</p>
         <div class="graph-diagram small">
           <svg class="gsvg" width="360" height="180" viewBox="0 0 520 260">
             <line class="gedge" x1="260" y1="40" x2="120" y2="130"/>
             <line class="gedge" x1="260" y1="40" x2="400" y2="130"/>
+            <line class="gedge" x1="260" y1="40" x2="260" y2="220"/>
             <line class="gedge" x1="120" y1="130" x2="260" y2="220"/>
-            <line class="gedge checked" x1="400" y1="130" x2="260" y2="220"/>
             <line class="gedge" x1="400" y1="130" x2="460" y2="220"/>
-            <line class="gedge" x1="260" y1="220" x2="460" y2="220"/>
             <g class="gnode"><circle cx="260" cy="40" r="26"/><text x="260" y="41">Ann</text></g>
             <g class="gnode"><circle cx="120" cy="130" r="26"/><text x="120" y="131">Ben</text></g>
             <g class="gnode checking"><circle cx="400" cy="130" r="26"/><text x="400" y="131">Cam</text></g>
@@ -605,16 +596,16 @@
           <div class="panel">
             <table class="minitable">
               <tr><th></th><th>Ann</th><th>Ben</th><th>Cam</th><th>Dee</th><th>Eli</th></tr>
-            <tr><td class="rowhead">Ann</td><td class="diag">0</td><td class="one">1</td><td class="one">1</td><td class="zero">0</td><td class="zero">0</td></tr>
+            <tr><td class="rowhead">Ann</td><td class="diag">0</td><td class="one">1</td><td class="one">1</td><td class="one">1</td><td class="zero">0</td></tr>
             <tr><td class="rowhead">Ben</td><td class="one">1</td><td class="diag">0</td><td class="zero">0</td><td class="one">1</td><td class="zero">0</td></tr>
-            <tr><td class="rowhead">Cam</td><td class="one">1</td><td class="zero">0</td><td class="diag">0</td><td class="one newcell">1</td><td class="undetermined">&middot;</td></tr>
-            <tr><td class="rowhead">Dee</td><td class="zero">0</td><td class="one">1</td><td class="one newcell">1</td><td class="diag">0</td><td class="undetermined">&middot;</td></tr>
+            <tr><td class="rowhead">Cam</td><td class="one">1</td><td class="zero">0</td><td class="diag">0</td><td class="zero newcell">0</td><td class="undetermined">&middot;</td></tr>
+            <tr><td class="rowhead">Dee</td><td class="one">1</td><td class="one">1</td><td class="zero newcell">0</td><td class="diag">0</td><td class="undetermined">&middot;</td></tr>
             <tr><td class="rowhead">Eli</td><td class="zero">0</td><td class="zero">0</td><td class="undetermined">&middot;</td><td class="undetermined">&middot;</td><td class="diag">0</td></tr>
             </table>
           </div>
           <div class="panel">
             <ul class="notes">
-              <li>Cam and Dee ARE connected — write 1 in both [Cam,Dee] and [Dee,Cam].</li>
+              <li>Cam and Dee are NOT connected — write 0 in both [Cam,Dee] and [Dee,Cam].</li>
             </ul>
           </div>
         </div>
@@ -627,10 +618,9 @@
           <svg class="gsvg" width="360" height="180" viewBox="0 0 520 260">
             <line class="gedge" x1="260" y1="40" x2="120" y2="130"/>
             <line class="gedge" x1="260" y1="40" x2="400" y2="130"/>
+            <line class="gedge" x1="260" y1="40" x2="260" y2="220"/>
             <line class="gedge" x1="120" y1="130" x2="260" y2="220"/>
-            <line class="gedge" x1="400" y1="130" x2="260" y2="220"/>
             <line class="gedge checked" x1="400" y1="130" x2="460" y2="220"/>
-            <line class="gedge" x1="260" y1="220" x2="460" y2="220"/>
             <g class="gnode"><circle cx="260" cy="40" r="26"/><text x="260" y="41">Ann</text></g>
             <g class="gnode"><circle cx="120" cy="130" r="26"/><text x="120" y="131">Ben</text></g>
             <g class="gnode checking"><circle cx="400" cy="130" r="26"/><text x="400" y="131">Cam</text></g>
@@ -642,10 +632,10 @@
           <div class="panel">
             <table class="minitable">
               <tr><th></th><th>Ann</th><th>Ben</th><th>Cam</th><th>Dee</th><th>Eli</th></tr>
-            <tr><td class="rowhead">Ann</td><td class="diag">0</td><td class="one">1</td><td class="one">1</td><td class="zero">0</td><td class="zero">0</td></tr>
+            <tr><td class="rowhead">Ann</td><td class="diag">0</td><td class="one">1</td><td class="one">1</td><td class="one">1</td><td class="zero">0</td></tr>
             <tr><td class="rowhead">Ben</td><td class="one">1</td><td class="diag">0</td><td class="zero">0</td><td class="one">1</td><td class="zero">0</td></tr>
-            <tr><td class="rowhead">Cam</td><td class="one">1</td><td class="zero">0</td><td class="diag">0</td><td class="one">1</td><td class="one newcell">1</td></tr>
-            <tr><td class="rowhead">Dee</td><td class="zero">0</td><td class="one">1</td><td class="one">1</td><td class="diag">0</td><td class="undetermined">&middot;</td></tr>
+            <tr><td class="rowhead">Cam</td><td class="one">1</td><td class="zero">0</td><td class="diag">0</td><td class="zero">0</td><td class="one newcell">1</td></tr>
+            <tr><td class="rowhead">Dee</td><td class="one">1</td><td class="one">1</td><td class="zero">0</td><td class="diag">0</td><td class="undetermined">&middot;</td></tr>
             <tr><td class="rowhead">Eli</td><td class="zero">0</td><td class="zero">0</td><td class="one newcell">1</td><td class="undetermined">&middot;</td><td class="diag">0</td></tr>
             </table>
           </div>
@@ -659,15 +649,14 @@
 
       <section class="slide">
         <h2 class="slide-title">15 — Checking Dee — Eli</h2>
-        <p class="slide-sub">Dee and Eli ARE connected — write 1 in both [Dee,Eli] and [Eli,Dee].</p>
+        <p class="slide-sub">Dee and Eli are NOT connected — write 0 in both [Dee,Eli] and [Eli,Dee].</p>
         <div class="graph-diagram small">
           <svg class="gsvg" width="360" height="180" viewBox="0 0 520 260">
             <line class="gedge" x1="260" y1="40" x2="120" y2="130"/>
             <line class="gedge" x1="260" y1="40" x2="400" y2="130"/>
+            <line class="gedge" x1="260" y1="40" x2="260" y2="220"/>
             <line class="gedge" x1="120" y1="130" x2="260" y2="220"/>
-            <line class="gedge" x1="400" y1="130" x2="260" y2="220"/>
             <line class="gedge" x1="400" y1="130" x2="460" y2="220"/>
-            <line class="gedge checked" x1="260" y1="220" x2="460" y2="220"/>
             <g class="gnode"><circle cx="260" cy="40" r="26"/><text x="260" y="41">Ann</text></g>
             <g class="gnode"><circle cx="120" cy="130" r="26"/><text x="120" y="131">Ben</text></g>
             <g class="gnode"><circle cx="400" cy="130" r="26"/><text x="400" y="131">Cam</text></g>
@@ -679,16 +668,16 @@
           <div class="panel">
             <table class="minitable">
               <tr><th></th><th>Ann</th><th>Ben</th><th>Cam</th><th>Dee</th><th>Eli</th></tr>
-            <tr><td class="rowhead">Ann</td><td class="diag">0</td><td class="one">1</td><td class="one">1</td><td class="zero">0</td><td class="zero">0</td></tr>
+            <tr><td class="rowhead">Ann</td><td class="diag">0</td><td class="one">1</td><td class="one">1</td><td class="one">1</td><td class="zero">0</td></tr>
             <tr><td class="rowhead">Ben</td><td class="one">1</td><td class="diag">0</td><td class="zero">0</td><td class="one">1</td><td class="zero">0</td></tr>
-            <tr><td class="rowhead">Cam</td><td class="one">1</td><td class="zero">0</td><td class="diag">0</td><td class="one">1</td><td class="one">1</td></tr>
-            <tr><td class="rowhead">Dee</td><td class="zero">0</td><td class="one">1</td><td class="one">1</td><td class="diag">0</td><td class="one newcell">1</td></tr>
-            <tr><td class="rowhead">Eli</td><td class="zero">0</td><td class="zero">0</td><td class="one">1</td><td class="one newcell">1</td><td class="diag">0</td></tr>
+            <tr><td class="rowhead">Cam</td><td class="one">1</td><td class="zero">0</td><td class="diag">0</td><td class="zero">0</td><td class="one">1</td></tr>
+            <tr><td class="rowhead">Dee</td><td class="one">1</td><td class="one">1</td><td class="zero">0</td><td class="diag">0</td><td class="zero newcell">0</td></tr>
+            <tr><td class="rowhead">Eli</td><td class="zero">0</td><td class="zero">0</td><td class="one">1</td><td class="zero newcell">0</td><td class="diag">0</td></tr>
             </table>
           </div>
           <div class="panel">
             <ul class="notes">
-              <li>Dee and Eli ARE connected — write 1 in both [Dee,Eli] and [Eli,Dee].</li>
+              <li>Dee and Eli are NOT connected — write 0 in both [Dee,Eli] and [Eli,Dee].</li>
             </ul>
           </div>
         </div>
@@ -696,15 +685,14 @@
 
       <section class="slide">
         <h2 class="slide-title">16 — The Completed Matrix</h2>
-        <p class="slide-sub">Every pair checked — this is exactly the matrix from before.</p>
+        <p class="slide-sub">Every pair checked. Five friendships, out of ten possible pairs.</p>
         <div class="graph-diagram small">
           <svg class="gsvg" width="360" height="180" viewBox="0 0 520 260">
             <line class="gedge" x1="260" y1="40" x2="120" y2="130"/>
             <line class="gedge" x1="260" y1="40" x2="400" y2="130"/>
+            <line class="gedge" x1="260" y1="40" x2="260" y2="220"/>
             <line class="gedge" x1="120" y1="130" x2="260" y2="220"/>
-            <line class="gedge" x1="400" y1="130" x2="260" y2="220"/>
             <line class="gedge" x1="400" y1="130" x2="460" y2="220"/>
-            <line class="gedge" x1="260" y1="220" x2="460" y2="220"/>
             <g class="gnode"><circle cx="260" cy="40" r="26"/><text x="260" y="41">Ann</text></g>
             <g class="gnode"><circle cx="120" cy="130" r="26"/><text x="120" y="131">Ben</text></g>
             <g class="gnode"><circle cx="400" cy="130" r="26"/><text x="400" y="131">Cam</text></g>
@@ -716,11 +704,11 @@
           <div class="panel">
             <table class="minitable">
               <tr><th></th><th>Ann</th><th>Ben</th><th>Cam</th><th>Dee</th><th>Eli</th></tr>
-            <tr><td class="rowhead">Ann</td><td class="diag">0</td><td class="one">1</td><td class="one">1</td><td class="zero">0</td><td class="zero">0</td></tr>
+            <tr><td class="rowhead">Ann</td><td class="diag">0</td><td class="one">1</td><td class="one">1</td><td class="one">1</td><td class="zero">0</td></tr>
             <tr><td class="rowhead">Ben</td><td class="one">1</td><td class="diag">0</td><td class="zero">0</td><td class="one">1</td><td class="zero">0</td></tr>
-            <tr><td class="rowhead">Cam</td><td class="one">1</td><td class="zero">0</td><td class="diag">0</td><td class="one">1</td><td class="one">1</td></tr>
-            <tr><td class="rowhead">Dee</td><td class="zero">0</td><td class="one">1</td><td class="one">1</td><td class="diag">0</td><td class="one">1</td></tr>
-            <tr><td class="rowhead">Eli</td><td class="zero">0</td><td class="zero">0</td><td class="one">1</td><td class="one">1</td><td class="diag">0</td></tr>
+            <tr><td class="rowhead">Cam</td><td class="one">1</td><td class="zero">0</td><td class="diag">0</td><td class="zero">0</td><td class="one">1</td></tr>
+            <tr><td class="rowhead">Dee</td><td class="one">1</td><td class="one">1</td><td class="zero">0</td><td class="diag">0</td><td class="zero">0</td></tr>
+            <tr><td class="rowhead">Eli</td><td class="zero">0</td><td class="zero">0</td><td class="one">1</td><td class="zero">0</td><td class="diag">0</td></tr>
             </table>
           </div>
           <div class="panel">
@@ -738,11 +726,11 @@
         <div class="grid cols2">
           <div class="panel">
             <div class="adjlist">
-              <span class="key">Ann</span> <span class="arrow">→</span> Ben, Cam<br>
+              <span class="key">Ann</span> <span class="arrow">→</span> Ben, Cam, Dee<br>
               <span class="key">Ben</span> <span class="arrow">→</span> Ann, Dee<br>
-              <span class="key">Cam</span> <span class="arrow">→</span> Ann, Dee, Eli<br>
-              <span class="key">Dee</span> <span class="arrow">→</span> Ben, Cam, Eli<br>
-              <span class="key">Eli</span> <span class="arrow">→</span> Cam, Dee
+              <span class="key">Cam</span> <span class="arrow">→</span> Ann, Eli<br>
+              <span class="key">Dee</span> <span class="arrow">→</span> Ann, Ben<br>
+              <span class="key">Eli</span> <span class="arrow">→</span> Cam
             </div>
           </div>
           <div class="panel">
@@ -822,7 +810,7 @@
           </div>
           <table class="minitable" style="margin-top:8px;">
             <tr><th style="text-align:left;">Example</th><th>V</th><th>Max possible edges</th><th>Actual edges</th><th>Dense or sparse?</th></tr>
-            <tr><td class="rowhead" style="text-align:left;">Our 5-friend example</td><td>5</td><td>10</td><td>6</td><td style="color:var(--new); font-weight:700;">fairly dense (60%)</td></tr>
+            <tr><td class="rowhead" style="text-align:left;">Our 5-friend example</td><td>5</td><td>10</td><td>5</td><td style="color:var(--new); font-weight:700;">middling (50%)</td></tr>
             <tr><td class="rowhead" style="text-align:left;">Round-robin chess tournament, 8 players</td><td>8</td><td>28</td><td>28</td><td style="color:var(--new); font-weight:700;">fully dense (100%)</td></tr>
             <tr><td class="rowhead" style="text-align:left;">Real social network (~1,000 users, ~200 friends each)</td><td>1,000</td><td>~500,000</td><td>~100,000</td><td style="color:var(--acc); font-weight:700;">sparse (~20%)</td></tr>
             <tr><td class="rowhead" style="text-align:left;">Instagram-scale network</td><td>billions</td><td>quadrillions+</td><td>a tiny sliver</td><td style="color:var(--acc); font-weight:700;">extremely sparse (&lt;0.0001%)</td></tr>
