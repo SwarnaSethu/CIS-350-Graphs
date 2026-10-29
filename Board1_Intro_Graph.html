@@ -118,23 +118,24 @@
       <div class="rail-item" data-step="1"><span class="n">1</span>What is a Graph?</div>
       <div class="rail-item" data-step="2"><span class="n">2</span>Vocabulary</div>
       <div class="rail-item" data-step="3"><span class="n">3</span>Applications of Graphs</div>
-      <div class="rail-item" data-step="4"><span class="n">4</span>Matrix: Setup</div>
-      <div class="rail-item" data-step="5"><span class="n">5</span>Check Ann–Ben</div>
-      <div class="rail-item" data-step="6"><span class="n">6</span>Check Ann–Cam</div>
-      <div class="rail-item" data-step="7"><span class="n">7</span>Check Ann–Dee</div>
-      <div class="rail-item" data-step="8"><span class="n">8</span>Check Ann–Eli</div>
-      <div class="rail-item" data-step="9"><span class="n">9</span>Check Ben–Cam</div>
-      <div class="rail-item" data-step="10"><span class="n">10</span>Check Ben–Dee</div>
-      <div class="rail-item" data-step="11"><span class="n">11</span>Check Ben–Eli</div>
-      <div class="rail-item" data-step="12"><span class="n">12</span>Check Cam–Dee</div>
-      <div class="rail-item" data-step="13"><span class="n">13</span>Check Cam–Eli</div>
-      <div class="rail-item" data-step="14"><span class="n">14</span>Check Dee–Eli</div>
-      <div class="rail-item" data-step="15"><span class="n">15</span>Matrix: Complete</div>
-      <div class="rail-item" data-step="16"><span class="n">16</span>Adjacency List</div>
-      <div class="rail-item" data-step="17"><span class="n">17</span>Which One, and When?</div>
-      <div class="rail-item" data-step="18"><span class="n">18</span>Dense vs. Sparse</div>
-      <div class="rail-item" data-step="19"><span class="n">19</span>Real-World Judgment Calls</div>
-      <div class="rail-item" data-step="20"><span class="n">20</span>Key Takeaways</div>
+      <div class="rail-item" data-step="4"><span class="n">4</span>Representing a Graph: 2 Ways</div>
+      <div class="rail-item" data-step="5"><span class="n">5</span>Matrix: Setup</div>
+      <div class="rail-item" data-step="6"><span class="n">6</span>Check Ann–Ben</div>
+      <div class="rail-item" data-step="7"><span class="n">7</span>Check Ann–Cam</div>
+      <div class="rail-item" data-step="8"><span class="n">8</span>Check Ann–Dee</div>
+      <div class="rail-item" data-step="9"><span class="n">9</span>Check Ann–Eli</div>
+      <div class="rail-item" data-step="10"><span class="n">10</span>Check Ben–Cam</div>
+      <div class="rail-item" data-step="11"><span class="n">11</span>Check Ben–Dee</div>
+      <div class="rail-item" data-step="12"><span class="n">12</span>Check Ben–Eli</div>
+      <div class="rail-item" data-step="13"><span class="n">13</span>Check Cam–Dee</div>
+      <div class="rail-item" data-step="14"><span class="n">14</span>Check Cam–Eli</div>
+      <div class="rail-item" data-step="15"><span class="n">15</span>Check Dee–Eli</div>
+      <div class="rail-item" data-step="16"><span class="n">16</span>Matrix: Complete</div>
+      <div class="rail-item" data-step="17"><span class="n">17</span>Adjacency List</div>
+      <div class="rail-item" data-step="18"><span class="n">18</span>Which One, and When?</div>
+      <div class="rail-item" data-step="19"><span class="n">19</span>Dense vs. Sparse</div>
+      <div class="rail-item" data-step="20"><span class="n">20</span>Real-World Judgment Calls</div>
+      <div class="rail-item" data-step="21"><span class="n">21</span>Key Takeaways</div>
     </nav>
 
     <main class="stage">
@@ -149,8 +150,10 @@
             <tr><td class="rowhead">1</td><td style="text-align:left;">What a graph actually is — vertices + edges, and why it's different from a list or a tree</td></tr>
             <tr><td class="rowhead">2</td><td style="text-align:left;">Vocabulary — vertex, edge, adjacent, undirected vs. directed</td></tr>
             <tr><td class="rowhead">3</td><td style="text-align:left;">Applications — where graphs actually show up in the real world</td></tr>
-            <tr><td class="rowhead">4–5</td><td style="text-align:left;">Two ways to store a graph in code: the adjacency matrix and the adjacency list</td></tr>
-            <tr><td class="rowhead">6–8</td><td style="text-align:left;">How to actually choose between them — density, real numbers, real scenarios</td></tr>
+            <tr><td class="rowhead">4</td><td style="text-align:left;">Representing a graph in code — two standard ways, before we dive into either one</td></tr>
+            <tr><td class="rowhead">5–16</td><td style="text-align:left;">Building the adjacency matrix by hand, pair by pair</td></tr>
+            <tr><td class="rowhead">17</td><td style="text-align:left;">The adjacency list — the other way to store the same graph</td></tr>
+            <tr><td class="rowhead">18–20</td><td style="text-align:left;">How to actually choose between them — density, real numbers, real scenarios</td></tr>
           </table>
           <p style="font-size:13px; margin-top:8px;">One example carries through the whole board: <b>five friends on a social app</b> — Ann, Ben, Cam, Dee, Eli.</p>
         </div>
@@ -253,11 +256,38 @@
         <p style="font-size:13px; margin-top:10px; color:var(--grey);">Notice the pattern: every example is just <b>"things" + "connections between things."</b> If a real-world problem is about connections, it's probably a graph problem.</p>
       </section>
 
-      <!-- SLIDE 4 -->
-
-      <!-- SLIDE 4 (matrix trace, sub-steps) -->
+      <!-- SLIDE 4 (new intro: two representations) -->
       <section class="slide">
-        <h2 class="slide-title">4 — Building the Matrix — Setup</h2>
+        <h2 class="slide-title">4 — Representing a Graph in Code: Two Ways</h2>
+        <p class="slide-sub">Before we build either one, here's what we're building toward</p>
+        <div class="panel" style="display:block; margin-bottom:14px;">
+          <ul class="notes">
+            <li>We know what a graph <i>is</i> now — vertices and edges. To actually use one in a program, we need to store it somehow.</li>
+            <li>There are two standard ways to do this: the <b>adjacency matrix</b> (a grid of 0s and 1s) and the <b>adjacency list</b> (each vertex keeps its own short list of neighbors).</li>
+            <li>Same graph, same information either way — just organized differently, with different trade-offs.</li>
+          </ul>
+        </div>
+        <div class="grid cols2">
+          <div class="panel">
+            <div class="panel-head"><div class="num">a</div><h3>Adjacency Matrix</h3></div>
+            <ul class="notes">
+              <li>A grid: one row and one column per vertex. 1 means connected, 0 means not.</li>
+              <li>We'll build this one first, by hand, checking every pair.</li>
+            </ul>
+          </div>
+          <div class="panel">
+            <div class="panel-head"><div class="num">b</div><h3>Adjacency List</h3></div>
+            <ul class="notes">
+              <li>Each vertex keeps a short list of just its actual neighbors — nothing written down for pairs that aren't connected.</li>
+              <li>We'll look at this one right after the matrix is built.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 5 (matrix trace, sub-steps) -->
+      <section class="slide">
+        <h2 class="slide-title">5 — Building the Matrix — Setup</h2>
         <p class="slide-sub">Rows and columns for every vertex. The diagonal is always 0 — a vertex isn't adjacent to itself.</p>
         <div class="graph-diagram small">
           <svg class="gsvg" width="360" height="180" viewBox="0 0 520 260">
@@ -294,7 +324,7 @@
       </section>
 
       <section class="slide">
-        <h2 class="slide-title">5 — Checking Ann — Ben</h2>
+        <h2 class="slide-title">6 — Checking Ann — Ben</h2>
         <p class="slide-sub">Ann and Ben ARE connected — write 1 in both [Ann,Ben] and [Ben,Ann].</p>
         <div class="graph-diagram small">
           <svg class="gsvg" width="360" height="180" viewBox="0 0 520 260">
@@ -331,7 +361,7 @@
       </section>
 
       <section class="slide">
-        <h2 class="slide-title">6 — Checking Ann — Cam</h2>
+        <h2 class="slide-title">7 — Checking Ann — Cam</h2>
         <p class="slide-sub">Ann and Cam ARE connected — write 1 in both [Ann,Cam] and [Cam,Ann].</p>
         <div class="graph-diagram small">
           <svg class="gsvg" width="360" height="180" viewBox="0 0 520 260">
@@ -368,7 +398,7 @@
       </section>
 
       <section class="slide">
-        <h2 class="slide-title">7 — Checking Ann — Dee</h2>
+        <h2 class="slide-title">8 — Checking Ann — Dee</h2>
         <p class="slide-sub">Ann and Dee are NOT connected — write 0 in both [Ann,Dee] and [Dee,Ann].</p>
         <div class="graph-diagram small">
           <svg class="gsvg" width="360" height="180" viewBox="0 0 520 260">
@@ -405,7 +435,7 @@
       </section>
 
       <section class="slide">
-        <h2 class="slide-title">8 — Checking Ann — Eli</h2>
+        <h2 class="slide-title">9 — Checking Ann — Eli</h2>
         <p class="slide-sub">Ann and Eli are NOT connected — write 0 in both [Ann,Eli] and [Eli,Ann].</p>
         <div class="graph-diagram small">
           <svg class="gsvg" width="360" height="180" viewBox="0 0 520 260">
@@ -442,7 +472,7 @@
       </section>
 
       <section class="slide">
-        <h2 class="slide-title">9 — Checking Ben — Cam</h2>
+        <h2 class="slide-title">10 — Checking Ben — Cam</h2>
         <p class="slide-sub">Ben and Cam are NOT connected — write 0 in both [Ben,Cam] and [Cam,Ben].</p>
         <div class="graph-diagram small">
           <svg class="gsvg" width="360" height="180" viewBox="0 0 520 260">
@@ -479,7 +509,7 @@
       </section>
 
       <section class="slide">
-        <h2 class="slide-title">10 — Checking Ben — Dee</h2>
+        <h2 class="slide-title">11 — Checking Ben — Dee</h2>
         <p class="slide-sub">Ben and Dee ARE connected — write 1 in both [Ben,Dee] and [Dee,Ben].</p>
         <div class="graph-diagram small">
           <svg class="gsvg" width="360" height="180" viewBox="0 0 520 260">
@@ -516,7 +546,7 @@
       </section>
 
       <section class="slide">
-        <h2 class="slide-title">11 — Checking Ben — Eli</h2>
+        <h2 class="slide-title">12 — Checking Ben — Eli</h2>
         <p class="slide-sub">Ben and Eli are NOT connected — write 0 in both [Ben,Eli] and [Eli,Ben].</p>
         <div class="graph-diagram small">
           <svg class="gsvg" width="360" height="180" viewBox="0 0 520 260">
@@ -553,7 +583,7 @@
       </section>
 
       <section class="slide">
-        <h2 class="slide-title">12 — Checking Cam — Dee</h2>
+        <h2 class="slide-title">13 — Checking Cam — Dee</h2>
         <p class="slide-sub">Cam and Dee ARE connected — write 1 in both [Cam,Dee] and [Dee,Cam].</p>
         <div class="graph-diagram small">
           <svg class="gsvg" width="360" height="180" viewBox="0 0 520 260">
@@ -590,7 +620,7 @@
       </section>
 
       <section class="slide">
-        <h2 class="slide-title">13 — Checking Cam — Eli</h2>
+        <h2 class="slide-title">14 — Checking Cam — Eli</h2>
         <p class="slide-sub">Cam and Eli ARE connected — write 1 in both [Cam,Eli] and [Eli,Cam].</p>
         <div class="graph-diagram small">
           <svg class="gsvg" width="360" height="180" viewBox="0 0 520 260">
@@ -627,7 +657,7 @@
       </section>
 
       <section class="slide">
-        <h2 class="slide-title">14 — Checking Dee — Eli</h2>
+        <h2 class="slide-title">15 — Checking Dee — Eli</h2>
         <p class="slide-sub">Dee and Eli ARE connected — write 1 in both [Dee,Eli] and [Eli,Dee].</p>
         <div class="graph-diagram small">
           <svg class="gsvg" width="360" height="180" viewBox="0 0 520 260">
@@ -664,7 +694,7 @@
       </section>
 
       <section class="slide">
-        <h2 class="slide-title">15 — The Completed Matrix</h2>
+        <h2 class="slide-title">16 — The Completed Matrix</h2>
         <p class="slide-sub">Every pair checked — this is exactly the matrix from before.</p>
         <div class="graph-diagram small">
           <svg class="gsvg" width="360" height="180" viewBox="0 0 520 260">
@@ -702,7 +732,7 @@
 
       <!-- SLIDE 5 -->
       <section class="slide">
-        <h2 class="slide-title">16 — Adjacency List</h2>
+        <h2 class="slide-title">17 — Adjacency List</h2>
         <p class="slide-sub">Storing the graph as each vertex's own contact list</p>
         <div class="grid cols2">
           <div class="panel">
@@ -727,7 +757,7 @@
 
       <!-- SLIDE 6 -->
       <section class="slide">
-        <h2 class="slide-title">17 — Which One, and When?</h2>
+        <h2 class="slide-title">18 — Which One, and When?</h2>
         <p class="slide-sub">Same graph, two valid formats, different trade-offs</p>
         <div class="panel" style="display:block;">
           <table class="minitable">
@@ -741,7 +771,7 @@
 
       <!-- SLIDE 7 -->
       <section class="slide">
-        <h2 class="slide-title">18 — Dense vs. Sparse, Defined</h2>
+        <h2 class="slide-title">19 — Dense vs. Sparse, Defined</h2>
         <p class="slide-sub">Not just adjectives — something you can compute</p>
         <div class="panel" style="display:block;">
           <ul class="notes">
@@ -761,7 +791,7 @@
 
       <!-- SLIDE 8 -->
       <section class="slide">
-        <h2 class="slide-title">19 — Real-World Judgment Calls</h2>
+        <h2 class="slide-title">20 — Real-World Judgment Calls</h2>
         <p class="slide-sub">Which would you actually pick?</p>
         <div class="branch-row">
           <div class="branch-card">
@@ -794,7 +824,7 @@
 
       <!-- SLIDE 9 -->
       <section class="slide">
-        <h2 class="slide-title">20 — Key Takeaways</h2>
+        <h2 class="slide-title">21 — Key Takeaways</h2>
         <p class="slide-sub">Before we move to Board 2 (DFS &amp; BFS)</p>
         <div class="bottom-row">
           <div class="what-box">
@@ -823,7 +853,7 @@
 
   <div class="navbar">
     <button class="nav-btn" id="prevBtn">← Back</button>
-    <span class="step-indicator" id="stepIndicator">1 / 10</span>
+    <span class="step-indicator" id="stepIndicator">1 / 22</span>
     <button class="nav-btn primary" id="nextBtn">Next →</button>
   </div>
 
