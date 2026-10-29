@@ -136,6 +136,7 @@
       <div class="rail-item" data-step="19"><span class="n">19</span>Dense vs. Sparse</div>
       <div class="rail-item" data-step="20"><span class="n">20</span>Real-World Judgment Calls</div>
       <div class="rail-item" data-step="21"><span class="n">21</span>Key Takeaways</div>
+      <div class="rail-item" data-step="22"><span class="n">22</span>References</div>
     </nav>
 
     <main class="stage">
@@ -778,6 +779,47 @@
             <li>For <b>V</b> vertices, the most edges an undirected graph could possibly have is <code>V(V-1)/2</code> — every vertex connected to every other.</li>
             <li><b>Dense graph:</b> actual edges are <i>close to</i> that maximum. <b>Sparse graph:</b> actual edges are <i>far below</i> it.</li>
           </ul>
+          <div class="grid cols2" style="margin-top:10px;">
+            <div class="graph-diagram small">
+              <div class="cap">Dense — 6 vertices, 12 of 15 possible edges</div>
+              <svg class="gsvg" width="220" height="190" viewBox="0 0 240 200">
+                <line class="gedge" x1="120" y1="30" x2="181" y2="65"/>
+                <line class="gedge" x1="181" y1="65" x2="181" y2="135"/>
+                <line class="gedge" x1="181" y1="135" x2="120" y2="170"/>
+                <line class="gedge" x1="120" y1="170" x2="59" y2="135"/>
+                <line class="gedge" x1="59" y1="135" x2="59" y2="65"/>
+                <line class="gedge" x1="59" y1="65" x2="120" y2="30"/>
+                <line class="gedge" x1="120" y1="30" x2="181" y2="135"/>
+                <line class="gedge" x1="181" y1="65" x2="120" y2="170"/>
+                <line class="gedge" x1="181" y1="135" x2="59" y2="135"/>
+                <line class="gedge" x1="120" y1="170" x2="59" y2="65"/>
+                <line class="gedge" x1="59" y1="135" x2="120" y2="30"/>
+                <line class="gedge" x1="59" y1="65" x2="181" y2="65"/>
+                <circle cx="120" cy="30" r="9" fill="var(--pill)" stroke="var(--pill-border)" stroke-width="2"/>
+                <circle cx="181" cy="65" r="9" fill="var(--pill)" stroke="var(--pill-border)" stroke-width="2"/>
+                <circle cx="181" cy="135" r="9" fill="var(--pill)" stroke="var(--pill-border)" stroke-width="2"/>
+                <circle cx="120" cy="170" r="9" fill="var(--pill)" stroke="var(--pill-border)" stroke-width="2"/>
+                <circle cx="59" cy="135" r="9" fill="var(--pill)" stroke="var(--pill-border)" stroke-width="2"/>
+                <circle cx="59" cy="65" r="9" fill="var(--pill)" stroke="var(--pill-border)" stroke-width="2"/>
+              </svg>
+            </div>
+            <div class="graph-diagram small">
+              <div class="cap">Sparse — 6 vertices, 5 of 15 possible edges</div>
+              <svg class="gsvg" width="220" height="190" viewBox="0 0 240 200">
+                <line class="gedge" x1="120" y1="30" x2="181" y2="65"/>
+                <line class="gedge" x1="181" y1="65" x2="181" y2="135"/>
+                <line class="gedge" x1="181" y1="135" x2="120" y2="170"/>
+                <line class="gedge" x1="120" y1="170" x2="59" y2="135"/>
+                <line class="gedge" x1="59" y1="135" x2="59" y2="65"/>
+                <circle cx="120" cy="30" r="9" fill="var(--pill)" stroke="var(--pill-border)" stroke-width="2"/>
+                <circle cx="181" cy="65" r="9" fill="var(--pill)" stroke="var(--pill-border)" stroke-width="2"/>
+                <circle cx="181" cy="135" r="9" fill="var(--pill)" stroke="var(--pill-border)" stroke-width="2"/>
+                <circle cx="120" cy="170" r="9" fill="var(--pill)" stroke="var(--pill-border)" stroke-width="2"/>
+                <circle cx="59" cy="135" r="9" fill="var(--pill)" stroke="var(--pill-border)" stroke-width="2"/>
+                <circle cx="59" cy="65" r="9" fill="var(--pill)" stroke="var(--pill-border)" stroke-width="2"/>
+              </svg>
+            </div>
+          </div>
           <table class="minitable" style="margin-top:8px;">
             <tr><th style="text-align:left;">Example</th><th>V</th><th>Max possible edges</th><th>Actual edges</th><th>Dense or sparse?</th></tr>
             <tr><td class="rowhead" style="text-align:left;">Our 5-friend example</td><td>5</td><td>10</td><td>6</td><td style="color:var(--new); font-weight:700;">fairly dense (60%)</td></tr>
@@ -812,9 +854,9 @@
             <div class="bc-sub">Billions of users, a few hundred follows each. A matrix would need (billions)² cells — physically impossible to store. The list is the only option.</div>
           </div>
           <div class="branch-card">
-            <div class="bc-label">Our 5-friend class example</div>
+            <div class="bc-label">Our 5-friend example</div>
             <div class="bc-main">→ Matrix (for THIS reason only)</div>
-            <div class="bc-sub">Not because real friend networks are dense — they aren't. We pick the matrix here purely because V is tiny (5), so O(V²) costs nothing, and the code stays short enough to trace on a board.</div>
+            <div class="bc-sub">Not because real friend networks are dense — they aren't. The matrix works well here because V is tiny (5), so O(V²) costs nothing, and the resulting code stays simple and easy to trace by hand.</div>
           </div>
         </div>
         <div class="panel" style="margin-top:12px;">
@@ -840,11 +882,22 @@
           <div class="takeaway-box">
             <h2>Carrying Forward</h2>
             <ul>
-              <li>Our code will use the <b>matrix</b> — matches the textbook and keeps the code short for one class, not because it's the "better" choice in general.</li>
+              <li>The code we'll build uses the <b>matrix</b> — it matches the textbook and keeps the implementation simple for a graph this small, not because it's the "better" choice in general.</li>
               <li>Same five friends (Ann, Ben, Cam, Dee, Eli) carry into Board 2 — DFS and BFS, traced by hand on this exact graph.</li>
               <li>Next up: Board 2.</li>
             </ul>
           </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 10 -->
+      <section class="slide">
+        <h2 class="slide-title">22 — References</h2>
+        <p class="slide-sub">&nbsp;</p>
+        <div class="panel wide" style="display:block;">
+          <ul class="notes">
+            <li>McMillan, M. <i>Data Structures and Algorithms Using C#</i>, Chapter 16 — Graphs.</li>
+          </ul>
         </div>
       </section>
 
@@ -853,7 +906,7 @@
 
   <div class="navbar">
     <button class="nav-btn" id="prevBtn">← Back</button>
-    <span class="step-indicator" id="stepIndicator">1 / 22</span>
+    <span class="step-indicator" id="stepIndicator">1 / 23</span>
     <button class="nav-btn primary" id="nextBtn">Next →</button>
   </div>
 
