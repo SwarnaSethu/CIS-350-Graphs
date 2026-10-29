@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Board 1 — What's a Graph?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Architects+Daughter&family=Kalam:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#16233A; --acc:#0B6BCB; --acc-lt:#EAF1F6; --new:#D98F2B; --new-lt:#FBEBD3;
+    --green:#1F7A3D; --purple:#6B3FA0; --grey:#595959;
+    --pill:#D9E8F5; --pill-border:#AFC9E3; --card-border:#D5D5D5; --shaded:#F2F2F2;
+  }
+  *{ box-sizing:border-box; }
+  html,body{ height:100%; margin:0; }
+  body{ display:flex; flex-direction:column; font-family:'Kalam', cursive; color:var(--ink);
+    background-color:#fffdf8; background-image: radial-gradient(#d9d9d9 1px, transparent 1px); background-size:18px 18px; }
+
+  /* ---------- app shell / navigator ---------- */
+  header.topbar{ padding:10px 20px; border-bottom:2.5px solid var(--acc); background:#fff; flex-shrink:0; }
+  header.topbar h1{ font-family:'Architects Daughter', cursive; font-size:20px; margin:0; text-align:center; }
+  header.topbar p{ text-align:center; margin:2px 0 0 0; color:var(--grey); font-size:12.5px; }
+  .app-shell{ display:flex; flex:1; min-height:0; }
+  .rail{ width:240px; flex-shrink:0; border-right:2.5px solid var(--acc); background:#fff; overflow-y:auto; padding:10px 0 70px 0; }
+  .rail-item{ padding:10px 16px; font-size:13px; cursor:pointer; border-left:4px solid transparent; color:var(--grey); line-height:1.3; }
+  .rail-item .n{ font-weight:700; color:var(--acc); margin-right:4px; }
+  .rail-item:hover{ background:var(--acc-lt); }
+  .rail-item.active{ border-left-color:var(--acc); color:var(--ink); font-weight:700; background:var(--acc-lt); }
+  .stage{ flex:1; overflow-y:auto; padding:26px 34px 90px 34px; }
+  .slide{ display:none; max-width:1000px; margin:0 auto; }
+  .slide.active{ display:block; animation:fadein .18s ease-out; }
+  @keyframes fadein{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
+  .navbar{ position:fixed; left:240px; right:0; bottom:0; background:#fff; border-top:2.5px solid var(--acc); padding:9px 24px; display:flex; align-items:center; justify-content:space-between; box-shadow:0 -2px 8px rgba(0,0,0,.05); }
+  .nav-btn{ font-family:'Kalam', cursive; font-weight:700; font-size:14px; border:2px solid var(--acc); background:#fff; color:var(--acc); border-radius:20px; padding:7px 18px; cursor:pointer; }
+  .nav-btn:disabled{ opacity:.3; cursor:default; }
+  .nav-btn.primary{ background:var(--acc); color:#fff; }
+  .step-indicator{ font-size:13px; color:var(--grey); }
+  .slide-title{ font-family:'Architects Daughter', cursive; font-size:25px; margin:0 0 3px 0; color:var(--ink); }
+  .slide-sub{ color:var(--grey); font-size:14px; margin:0 0 16px 0; }
+
+  /* ---------- reused whiteboard content styles ---------- */
+  .grid{ display:grid; grid-template-columns:repeat(3, 1fr); gap:18px; margin-bottom:18px; }
+  .grid.cols2{ grid-template-columns:repeat(2, 1fr); }
+  .panel{ border:2px solid #7fb3e0; border-radius:14px; background:#fff; padding:12px 14px 14px 14px; }
+  .panel.wide{ grid-column: span 3; }
+  .panel.wide2{ grid-column: span 2; }
+  .panel-head{ display:flex; align-items:center; gap:8px; margin-bottom:8px; }
+  .num{ width:26px; height:26px; border-radius:50%; border:2px solid var(--acc); color:var(--acc); display:flex; align-items:center; justify-content:center; font-family:'Architects Daughter', cursive; font-size:15px; flex-shrink:0; }
+  .panel-head h3{ font-family:'Architects Daughter', cursive; font-size:16px; margin:0; text-decoration:underline; text-decoration-color:var(--acc); }
+  .tag{ display:inline-block; margin-left:4px; font-size:11px; font-family:'Kalam', cursive; font-weight:700; border-radius:6px; padding:0 6px; }
+  .tag-new{ color:var(--new); border:1.5px solid var(--new); background:var(--new-lt); }
+  .tag-class{ color:var(--purple); border:1.5px solid var(--purple); background:#f1e8fb; }
+
+  .panel ul.notes, .panel ol.notes{ margin:0; padding-left:18px; font-size:13.5px; line-height:1.55; }
+  .panel ul.notes li, .panel ol.notes li{ margin-bottom:3px; }
+
+  .graph-diagram{ border:2px solid #C9C9C9; border-radius:12px; background:#FBFBFB; padding:16px; margin:8px 0; }
+  .graph-diagram.small{ padding:8px; }
+  .graph-diagram .cap{ text-align:center; font-size:11.5px; color:var(--grey); margin-bottom:6px; }
+  svg.gsvg{ display:block; margin:0 auto; }
+  .gnode circle{ fill:var(--pill); stroke:var(--pill-border); stroke-width:2; }
+  .gnode text{ font-family:'Consolas','Courier New',monospace; font-weight:700; font-size:13px; fill:var(--ink); text-anchor:middle; dominant-baseline:middle; }
+  .gedge{ stroke:#9aa7b8; stroke-width:2; }
+  .gedge.checked{ stroke:var(--new); stroke-width:4; }
+  .gnode.checking circle{ fill:var(--new-lt); stroke:var(--new); stroke-width:4; }
+  .gnode.checking text{ fill:var(--new); }
+
+  .minitable{ width:100%; border-collapse:collapse; font-size:12.5px; margin:6px 0; }
+  .minitable th{ background:var(--ink); color:#fff; padding:4px 7px; text-align:center; font-weight:700; }
+  .minitable td{ padding:4px 7px; border-bottom:1px solid #e3e3e3; text-align:center; }
+  .minitable td.rowhead{ font-weight:700; color:var(--acc); text-align:left; background:var(--acc-lt); }
+  .minitable td.one{ color:var(--green); font-weight:700; }
+  .minitable td.zero{ color:var(--grey); }
+  .minitable td.diag{ color:#bbb; background:#fafafa; }
+  .minitable td.undetermined{ color:#cccccc; font-weight:700; }
+  .minitable td.newcell{ background:var(--new-lt); outline:2px solid var(--new); border-radius:3px; }
+  .adjlist{ font-family:'Consolas','Courier New',monospace; font-size:13px; line-height:1.9; }
+  .adjlist .key{ font-weight:700; color:var(--acc); }
+  .adjlist .arrow{ color:var(--grey); }
+
+  .branch-row{ display:flex; gap:8px; margin:5px 0; }
+  .branch-card{ flex:1; border:1.5px solid var(--card-border); border-radius:10px; padding:9px 11px; text-align:center; background:#fff; }
+  .branch-card .bc-label{ font-weight:700; font-size:12.5px; }
+  .branch-card .bc-main{ font-family:'Consolas','Courier New',monospace; font-weight:700; font-size:12.5px; margin:3px 0; }
+  .branch-card .bc-sub{ font-size:11.5px; color:var(--grey); text-align:left; }
+
+  .appcard{ border:1.5px solid var(--card-border); border-radius:12px; background:#fff; padding:10px 12px; }
+  .appcard .ac-title{ font-family:'Architects Daughter', cursive; font-size:15px; color:var(--acc); margin-bottom:3px; }
+  .appcard .ac-body{ font-size:12.5px; line-height:1.5; color:var(--ink); }
+  .appcard .ac-model{ font-size:11.5px; color:var(--grey); margin-top:4px; font-style:italic; }
+
+  .bottom-row{ display:flex; gap:20px; margin-top:6px; }
+  .what-box{ border:2.5px solid var(--green); border-radius:14px; background:#fff; padding:14px 18px; flex:1; }
+  .what-box h2{ font-family:'Architects Daughter', cursive; font-size:18px; margin:0 0 8px 0; color:var(--green); text-decoration:underline; }
+  .what-box ol, .what-box ul{ margin:0; padding-left:20px; font-size:14px; line-height:1.6; }
+  .takeaway-box{ border:2.5px solid var(--purple); border-radius:14px; background:#fff; padding:14px 18px; flex:1; }
+  .takeaway-box h2{ font-family:'Architects Daughter', cursive; font-size:18px; margin:0 0 8px 0; color:var(--purple); text-decoration:underline; }
+  .takeaway-box ul{ margin:0; padding-left:20px; font-size:14px; line-height:1.6; }
+
+  .vocab-svg{ display:block; margin:2px auto 10px auto; }
+  .vocab-svg .vnode circle{ fill:var(--pill); stroke:var(--pill-border); stroke-width:2; }
+  .vocab-svg .vnode text{ font-family:'Consolas','Courier New',monospace; font-weight:700; font-size:13px; fill:var(--ink); text-anchor:middle; dominant-baseline:middle; }
+  .vocab-svg .vedge{ stroke:#9aa7b8; stroke-width:2; }
+  .vocab-svg .vlabel{ font-family:'Kalam', cursive; font-size:12px; fill:var(--acc); font-weight:700; }
+  .vocab-svg .vlabel.grey{ fill:var(--grey); font-weight:400; }
+</style>
+</head>
+<body>
+
+  <header class="topbar">
+    <h1>Board 1 — What's a Graph?</h1>
+    <p>Vocabulary &amp; Applications &nbsp;→&nbsp; Adjacency Matrix vs. Adjacency List, with a real-world example</p>
+  </header>
+
+  <div class="app-shell">
+    <nav class="rail">
+      <div class="rail-item" data-step="0"><span class="n">0</span>Roadmap</div>
+      <div class="rail-item" data-step="1"><span class="n">1</span>What is a Graph?</div>
+      <div class="rail-item" data-step="2"><span class="n">2</span>Vocabulary</div>
+      <div class="rail-item" data-step="3"><span class="n">3</span>Applications of Graphs</div>
+      <div class="rail-item" data-step="4"><span class="n">4</span>Matrix: Setup</div>
+      <div class="rail-item" data-step="5"><span class="n">5</span>Check Ann–Ben</div>
+      <div class="rail-item" data-step="6"><span class="n">6</span>Check Ann–Cam</div>
+      <div class="rail-item" data-step="7"><span class="n">7</span>Check Ann–Dee</div>
+      <div class="rail-item" data-step="8"><span class="n">8</span>Check Ann–Eli</div>
+      <div class="rail-item" data-step="9"><span class="n">9</span>Check Ben–Cam</div>
+      <div class="rail-item" data-step="10"><span class="n">10</span>Check Ben–Dee</div>
+      <div class="rail-item" data-step="11"><span class="n">11</span>Check Ben–Eli</div>
+      <div class="rail-item" data-step="12"><span class="n">12</span>Check Cam–Dee</div>
+      <div class="rail-item" data-step="13"><span class="n">13</span>Check Cam–Eli</div>
+      <div class="rail-item" data-step="14"><span class="n">14</span>Check Dee–Eli</div>
+      <div class="rail-item" data-step="15"><span class="n">15</span>Matrix: Complete</div>
+      <div class="rail-item" data-step="16"><span class="n">16</span>Adjacency List</div>
+      <div class="rail-item" data-step="17"><span class="n">17</span>Which One, and When?</div>
+      <div class="rail-item" data-step="18"><span class="n">18</span>Dense vs. Sparse</div>
+      <div class="rail-item" data-step="19"><span class="n">19</span>Real-World Judgment Calls</div>
+      <div class="rail-item" data-step="20"><span class="n">20</span>Key Takeaways</div>
+    </nav>
+
+    <main class="stage">
+
+      <!-- SLIDE 0 -->
+      <section class="slide">
+        <h2 class="slide-title">Board 1 — Roadmap</h2>
+        <p class="slide-sub">Everything in this board before we ever write code</p>
+        <div class="panel wide" style="display:block;">
+          <table class="minitable" style="font-size:13.5px;">
+            <tr><th style="text-align:left;">Step</th><th style="text-align:left;">What we cover</th></tr>
+            <tr><td class="rowhead">1</td><td style="text-align:left;">What a graph actually is — vertices + edges, and why it's different from a list or a tree</td></tr>
+            <tr><td class="rowhead">2</td><td style="text-align:left;">Vocabulary — vertex, edge, adjacent, undirected vs. directed</td></tr>
+            <tr><td class="rowhead">3</td><td style="text-align:left;">Applications — where graphs actually show up in the real world</td></tr>
+            <tr><td class="rowhead">4–5</td><td style="text-align:left;">Two ways to store a graph in code: the adjacency matrix and the adjacency list</td></tr>
+            <tr><td class="rowhead">6–8</td><td style="text-align:left;">How to actually choose between them — density, real numbers, real scenarios</td></tr>
+          </table>
+          <p style="font-size:13px; margin-top:8px;">One example carries through the whole board: <b>five friends on a social app</b> — Ann, Ben, Cam, Dee, Eli.</p>
+        </div>
+      </section>
+
+      <!-- SLIDE 1 -->
+      <section class="slide">
+        <h2 class="slide-title">1 — What is a Graph?</h2>
+        <p class="slide-sub">Vertices + edges — no required order, no required root</p>
+        <div class="graph-diagram">
+          <div class="cap">The example graph — who's friends with whom (undirected, unweighted)</div>
+          <svg class="gsvg" width="520" height="260" viewBox="0 0 520 260">
+            <line class="gedge" x1="260" y1="40"  x2="120" y2="130"/>
+            <line class="gedge" x1="260" y1="40"  x2="400" y2="130"/>
+            <line class="gedge" x1="120" y1="130" x2="260" y2="220"/>
+            <line class="gedge" x1="400" y1="130" x2="260" y2="220"/>
+            <line class="gedge" x1="400" y1="130" x2="460" y2="220"/>
+            <line class="gedge" x1="260" y1="220" x2="460" y2="220"/>
+            <g class="gnode"><circle cx="260" cy="40"  r="26"/><text x="260" y="41">Ann</text></g>
+            <g class="gnode"><circle cx="120" cy="130" r="26"/><text x="120" y="131">Ben</text></g>
+            <g class="gnode"><circle cx="400" cy="130" r="26"/><text x="400" y="131">Cam</text></g>
+            <g class="gnode"><circle cx="260" cy="220" r="26"/><text x="260" y="221">Dee</text></g>
+            <g class="gnode"><circle cx="460" cy="220" r="26"/><text x="460" y="221">Eli</text></g>
+          </svg>
+        </div>
+        <div class="grid cols2">
+          <div class="panel">
+            <div class="panel-head"><div class="num">a</div><h3>The Definition</h3></div>
+            <ul class="notes">
+              <li>A graph is just <b>vertices + edges</b>.</li>
+              <li>Unlike a tree, there's no required root and no required parent/child order — any vertex can connect to any other.</li>
+              <li><b>Real-world example:</b> on a social app, each person is a vertex. "Ann and Ben are friends" is an edge. The whole friend network is a graph.</li>
+            </ul>
+          </div>
+          <div class="panel">
+            <div class="panel-head"><div class="num">b</div><h3>What a Graph Answers</h3></div>
+            <ul class="notes">
+              <li>Questions a list or tree can't easily answer: <b>"is everything connected?"</b> and <b>"what's the shortest way from X to Y?"</b></li>
+              <li>Other real graphs, same idea: cities connected by roads/flights, web pages connected by links, computers connected by cables, tasks connected by "must finish before."</li>
+              <li>Part 3 covers the full list of applications.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 2 -->
+      <section class="slide">
+        <h2 class="slide-title">2 — Vocabulary</h2>
+        <p class="slide-sub">The handful of terms everything else is built on</p>
+        <div class="grid cols2">
+          <div class="panel">
+            <svg class="vocab-svg" width="300" height="172" viewBox="0 0 300 172">
+              <line class="vedge" x1="60" y1="34" x2="200" y2="34"/>
+              <g class="vnode"><circle cx="60" cy="34" r="17"/><text x="60" y="35">P</text></g>
+              <g class="vnode"><circle cx="200" cy="34" r="17"/><text x="200" y="35">Q</text></g>
+              <text class="vlabel" x="130" y="24" text-anchor="middle">edge</text>
+              <line x1="92" y1="18" x2="60" y2="2" stroke="#9aa7b8" stroke-width="1"/>
+              <text class="vlabel" x="60" y="6" text-anchor="middle">vertex</text>
+              <path d="M44,52 Q130,70 216,52" stroke="var(--new)" stroke-width="1.5" fill="none"/>
+              <text class="vlabel" x="130" y="76" text-anchor="middle">P and Q are adjacent (neighbors)</text>
+              <text class="vlabel grey" x="130" y="92" text-anchor="middle">undirected edge — no arrowhead, works both ways</text>
+              <defs>
+                <marker id="arrowhead" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+                  <path d="M0,0 L6,3 L0,6 Z" fill="#9aa7b8"/>
+                </marker>
+              </defs>
+              <line class="vedge" x1="60" y1="136" x2="182" y2="136" marker-end="url(#arrowhead)"/>
+              <g class="vnode"><circle cx="60" cy="136" r="17"/><text x="60" y="137">X</text></g>
+              <g class="vnode"><circle cx="200" cy="136" r="17"/><text x="200" y="137">Y</text></g>
+              <text class="vlabel grey" x="130" y="162" text-anchor="middle">directed edge — one-way (arrowhead), X → Y only</text>
+            </svg>
+          </div>
+          <div class="panel">
+            <div class="panel-head"><div class="num">b</div><h3>Terms</h3></div>
+            <ul class="notes">
+              <li><b>Vertex</b> (or node) — one "thing" in the graph. Plural: <i>vertices</i>.</li>
+              <li><b>Edge</b> — a connection between two vertices.</li>
+              <li><b>Adjacent</b> — two vertices connected by an edge are adjacent (neighbors).</li>
+              <li><b>Degree</b> — how many neighbors a vertex has. (Cam has degree 3: Ann, Dee, Eli.)</li>
+              <li><b>Undirected</b> graph — edges go both ways (friendship).</li>
+              <li><b>Directed</b> graph — edges are one-way (following someone on social media without them following back).</li>
+              <li>This class: <b>undirected, unweighted</b> graphs only.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 3 -->
+      <section class="slide">
+        <h2 class="slide-title">3 — Applications of Graphs</h2>
+        <p class="slide-sub">The same vertices-and-edges idea, showing up everywhere</p>
+        <div class="grid cols2">
+          <div class="appcard"><div class="ac-title">Social Networks</div><div class="ac-body">People are vertices, friendships/follows are edges. Finding "friends of friends," or how closely two people are connected, is a graph traversal.</div><div class="ac-model">vertex = person · edge = friend/follow</div></div>
+          <div class="appcard"><div class="ac-title">Maps &amp; Navigation</div><div class="ac-body">GPS apps like Google/Apple Maps model intersections as vertices and road segments as edges, then search the graph for the shortest route.</div><div class="ac-model">vertex = intersection · edge = road</div></div>
+          <div class="appcard"><div class="ac-title">The Web</div><div class="ac-body">Every web page is a vertex; every hyperlink is a directed edge. Search engines crawl this graph to discover and rank pages.</div><div class="ac-model">vertex = page · edge = hyperlink</div></div>
+          <div class="appcard"><div class="ac-title">Flight Networks</div><div class="ac-body">Airports are vertices, direct flight routes are edges. Airlines use this to plan layovers and you use it to find the cheapest/fastest trip.</div><div class="ac-model">vertex = airport · edge = direct flight</div></div>
+          <div class="appcard"><div class="ac-title">Course Prerequisites / Scheduling</div><div class="ac-body">Tasks or courses are vertices; "must finish before" relationships are directed edges. Figuring out a valid order to take them is a graph problem (topological sort).</div><div class="ac-model">vertex = course/task · edge = prerequisite</div></div>
+          <div class="appcard"><div class="ac-title">Computer Networks</div><div class="ac-body">Routers/computers are vertices, physical or logical connections are edges. Routing a packet across the internet is finding a path through this graph.</div><div class="ac-model">vertex = device · edge = connection</div></div>
+        </div>
+        <p style="font-size:13px; margin-top:10px; color:var(--grey);">Notice the pattern: every example is just <b>"things" + "connections between things."</b> If a real-world problem is about connections, it's probably a graph problem.</p>
+      </section>
+
+      <!-- SLIDE 4 -->
+
+      <!-- SLIDE 4 (matrix trace, sub-steps) -->
+      <section class="slide">
+        <h2 class="slide-title">4 — Building the Matrix — Setup</h2>
+        <p class="slide-sub">Rows and columns for every vertex. The diagonal is always 0 — a vertex isn't adjacent to itself.</p>
+        <div class="graph-diagram small">
+          <svg class="gsvg" width="360" height="180" viewBox="0 0 520 260">
+            <line class="gedge" x1="260" y1="40" x2="120" y2="130"/>
+            <line class="gedge" x1="260" y1="40" x2="400" y2="130"/>
+            <line class="gedge" x1="120" y1="130" x2="260" y2="220"/>
+            <line class="gedge" x1="400" y1="130" x2="260" y2="220"/>
+            <line class="gedge" x1="400" y1="130" x2="460" y2="220"/>
+            <line class="gedge" x1="260" y1="220" x2="460" y2="220"/>
+            <g class="gnode"><circle cx="260" cy="40" r="26"/><text x="260" y="41">Ann</text></g>
+            <g class="gnode"><circle cx="120" cy="130" r="26"/><text x="120" y="131">Ben</text></g>
+            <g class="gnode"><circle cx="400" cy="130" r="26"/><text x="400" y="131">Cam</text></g>
+            <g class="gnode"><circle cx="260" cy="220" r="26"/><text x="260" y="221">Dee</text></g>
+            <g class="gnode"><circle cx="460" cy="220" r="26"/><text x="460" y="221">Eli</text></g>
+          </svg>
+        </div>
+        <div class="grid cols2">
+          <div class="panel">
+            <table class="minitable">
+              <tr><th></th><th>Ann</th><th>Ben</th><th>Cam</th><th>Dee</th><th>Eli</th></tr>
+            <tr><td class="rowhead">Ann</td><td class="diag">0</td><td class="undetermined">&middot;</td><td class="undetermined">&middot;</td><td class="undetermined">&middot;</td><td class="undetermined">&middot;</td></tr>
+            <tr><td class="rowhead">Ben</td><td class="undetermined">&middot;</td><td class="diag">0</td><td class="undetermined">&middot;</td><td class="undetermined">&middot;</td><td class="undetermined">&middot;</td></tr>
+            <tr><td class="rowhead">Cam</td><td class="undetermined">&middot;</td><td class="undetermined">&middot;</td><td class="diag">0</td><td class="undetermined">&middot;</td><td class="undetermined">&middot;</td></tr>
+            <tr><td class="rowhead">Dee</td><td class="undetermined">&middot;</td><td class="undetermined">&middot;</td><td class="undetermined">&middot;</td><td class="diag">0</td><td class="undetermined">&middot;</td></tr>
+            <tr><td class="rowhead">Eli</td><td class="undetermined">&middot;</td><td class="undetermined">&middot;</td><td class="undetermined">&middot;</td><td class="undetermined">&middot;</td><td class="diag">0</td></tr>
+            </table>
+          </div>
+          <div class="panel">
+            <ul class="notes">
+              <li>We'll check every possible pair once, in order, and write 1 if an edge exists between them, 0 if it doesn't.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide">
+        <h2 class="slide-title">5 — Checking Ann — Ben</h2>
+        <p class="slide-sub">Ann and Ben ARE connected — write 1 in both [Ann,Ben] and [Ben,Ann].</p>
+        <div class="graph-diagram small">
+          <svg class="gsvg" width="360" height="180" viewBox="0 0 520 260">
+            <line class="gedge checked" x1="260" y1="40" x2="120" y2="130"/>
+            <line class="gedge" x1="260" y1="40" x2="400" y2="130"/>
+            <line class="gedge" x1="120" y1="130" x2="260" y2="220"/>
+            <line class="gedge" x1="400" y1="130" x2="260" y2="220"/>
+            <line class="gedge" x1="400" y1="130" x2="460" y2="220"/>
+            <line class="gedge" x1="260" y1="220" x2="460" y2="220"/>
+            <g class="gnode checking"><circle cx="260" cy="40" r="26"/><text x="260" y="41">Ann</text></g>
+            <g class="gnode checking"><circle cx="120" cy="130" r="26"/><text x="120" y="131">Ben</text></g>
+            <g class="gnode"><circle cx="400" cy="130" r="26"/><text x="400" y="131">Cam</text></g>
+            <g class="gnode"><circle cx="260" cy="220" r="26"/><text x="260" y="221">Dee</text></g>
+            <g class="gnode"><circle cx="460" cy="220" r="26"/><text x="460" y="221">Eli</text></g>
+          </svg>
+        </div>
+        <div class="grid cols2">
+          <div class="panel">
+            <table class="minitable">
+              <tr><th></th><th>Ann</th><th>Ben</th><th>Cam</th><th>Dee</th><th>Eli</th></tr>
+            <tr><td class="rowhead">Ann</td><td class="diag">0</td><td class="one newcell">1</td><td class="undetermined">&middot;</td><td class="undetermined">&middot;</td><td class="undetermined">&middot;</td></tr>
+            <tr><td class="rowhead">Ben</td><td class="one newcell">1</td><td class="diag">0</td><td class="undetermined">&middot;</td><td class="undetermined">&middot;</td><td class="undetermined">&middot;</td></tr>
+            <tr><td class="rowhead">Cam</td><td class="undetermined">&middot;</td><td class="undetermined">&middot;</td><td class="diag">0</td><td class="undetermined">&middot;</td><td class="undetermined">&middot;</td></tr>
+            <tr><td class="rowhead">Dee</td><td class="undetermined">&middot;</td><td class="undetermined">&middot;</td><td class="undetermined">&middot;</td><td class="diag">0</td><td class="undetermined">&middot;</td></tr>
+            <tr><td class="rowhead">Eli</td><td class="undetermined">&middot;</td><td class="undetermined">&middot;</td><td class="undetermined">&middot;</td><td class="undetermined">&middot;</td><td class="diag">0</td></tr>
+            </table>
+          </div>
+          <div class="panel">
+            <ul class="notes">
+              <li>Ann and Ben ARE connected — write 1 in both [Ann,Ben] and [Ben,Ann].</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide">
+        <h2 class="slide-title">6 — Checking Ann — Cam</h2>
+        <p class="slide-sub">Ann and Cam ARE connected — write 1 in both [Ann,Cam] and [Cam,Ann].</p>
+        <div class="graph-diagram small">
+          <svg class="gsvg" width="360" height="180" viewBox="0 0 520 260">
+            <line class="gedge" x1="260" y1="40" x2="120" y2="130"/>
+            <line class="gedge checked" x1="260" y1="40" x2="400" y2="130"/>
+            <line class="gedge" x1="120" y1="130" x2="260" y2="220"/>
+            <line class="gedge" x1="400" y1="130" x2="260" y2="220"/>
+            <line class="gedge" x1="400" y1="130" x2="460" y2="220"/>
+            <line class="gedge" x1="260" y1="220" x2="460" y2="220"/>
+            <g class="gnode checking"><circle cx="260" cy="40" r="26"/><text x="260" y="41">Ann</text></g>
+            <g class="gnode"><circle cx="120" cy="130" r="26"/><text x="120" y="131">Ben</text></g>
+            <g class="gnode checking"><circle cx="400" cy="130" r="26"/><text x="400" y="131">Cam</text></g>
+            <g class="gnode"><circle cx="260" cy="220" r="26"/><text x="260" y="221">Dee</text></g>
+            <g class="gnode"><circle cx="460" cy="220" r="26"/><text x="460" y="221">Eli</text></g>
+          </svg>
+        </div>
+        <div class="grid cols2">
+          <div class="panel">
+            <table class="minitable">
+              <tr><th></th><th>Ann</th><th>Ben</th><th>Cam</th><th>Dee</th><th>Eli</th></tr>
+            <tr><td class="rowhead">Ann</td><td class="diag">0</td><td class="one">1</td><td class="one newcell">1</td><td class="undetermined">&middot;</td><td class="undetermined">&middot;</td></tr>
+            <tr><td class="rowhead">Ben</td><td class="one">1</td><td class="diag">0</td><td class="undetermined">&middot;</td><td class="undetermined">&middot;</td><td class="undetermined">&middot;</td></tr>
+            <tr><td class="rowhead">Cam</td><td class="one newcell">1</td><td class="undetermined">&middot;</td><td class="diag">0</td><td class="undetermined">&middot;</td><td class="undetermined">&middot;</td></tr>
+            <tr><td class="rowhead">Dee</td><td class="undetermined">&middot;</td><td class="undetermined">&middot;</td><td class="undetermined">&middot;</td><td class="diag">0</td><td class="undetermined">&middot;</td></tr>
+            <tr><td class="rowhead">Eli</td><td class="undetermined">&middot;</td><td class="undetermined">&middot;</td><td class="undetermined">&middot;</td><td class="undetermined">&middot;</td><td class="diag">0</td></tr>
+            </table>
+          </div>
+          <div class="panel">
+            <ul class="notes">
+              <li>Ann and Cam ARE connected — write 1 in both [Ann,Cam] and [Cam,Ann].</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide">
+        <h2 class="slide-title">7 — Checking Ann — Dee</h2>
+        <p class="slide-sub">Ann and Dee are NOT connected — write 0 in both [Ann,Dee] and [Dee,Ann].</p>
+        <div class="graph-diagram small">
+          <svg class="gsvg" width="360" height="180" viewBox="0 0 520 260">
+            <line class="gedge" x1="260" y1="40" x2="120" y2="130"/>
+            <line class="gedge" x1="260" y1="40" x2="400" y2="130"/>
+            <line class="gedge" x1="120" y1="130" x2="260" y2="220"/>
+            <line class="gedge" x1="400" y1="130" x2="260" y2="220"/>
+            <line class="gedge" x1="400" y1="130" x2="460" y2="220"/>
+            <line class="gedge" x1="260" y1="220" x2="460" y2="220"/>
+            <g class="gnode checking"><circle cx="260" cy="40" r="26"/><text x="260" y="41">Ann</text></g>
+            <g class="gnode"><circle cx="120" cy="130" r="26"/><text x="120" y="131">Ben</text></g>
+            <g class="gnode"><circle cx="400" cy="130" r="26"/><text x="400" y="131">Cam</text></g>
+            <g class="gnode checking"><circle cx="260" cy="220" r="26"/><text x="260" y="221">Dee</text></g>
+            <g class="gnode"><circle cx="460" cy="220" r="26"/><text x="460" y="221">Eli</text></g>
+          </svg>
+        </div>
+        <div class="grid cols2">
+          <div class="panel">
+            <table class="minitable">
+              <tr><th></th><th>Ann</th><th>Ben</th><th>Cam</th><th>Dee</th><th>Eli</th></tr>
+            <tr><td class="rowhead">Ann</td><td class="diag">0</td><td class="one">1</td><td class="one">1</td><td class="zero newcell">0</td><td class="undetermined">&middot;</td></tr>
+            <tr><td class="rowhead">Ben</td><td class="one">1</td><td class="diag">0</td><td class="undetermined">&middot;</td><td class="undetermined">&middot;</td><td class="undetermined">&middot;</td></tr>
+            <tr><td class="rowhead">Cam</td><td class="one">1</td><td class="undetermined">&middot;</td><td class="diag">0</td><td class="undetermined">&middot;</td><td class="undetermined">&middot;</td></tr>
+            <tr><td class="rowhead">Dee</td><td class="zero newcell">0</td><td class="undetermined">&middot;</td><td class="undetermined">&middot;</td><td class="diag">0</td><td class="undetermined">&middot;</td></tr>
+            <tr><td class="rowhead">Eli</td><td class="undetermined">&middot;</td><td class="undetermined">&middot;</td><td class="undetermined">&middot;</td><td class="undetermined">&middot;</td><td class="diag">0</td></tr>
+            </table>
+          </div>
+          <div class="panel">
+            <ul class="notes">
+              <li>Ann and Dee are NOT connected — write 0 in both [Ann,Dee] and [Dee,Ann].</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide">
+        <h2 class="slide-title">8 — Checking Ann — Eli</h2>
+        <p class="slide-sub">Ann and Eli are NOT connected — write 0 in both [Ann,Eli] and [Eli,Ann].</p>
+        <div class="graph-diagram small">
+          <svg class="gsvg" width="360" height="180" viewBox="0 0 520 260">
+            <line class="gedge" x1="260" y1="40" x2="120" y2="130"/>
+            <line class="gedge" x1="260" y1="40" x2="400" y2="130"/>
+            <line class="gedge" x1="120" y1="130" x2="260" y2="220"/>
+            <line class="gedge" x1="400" y1="130" x2="260" y2="220"/>
+            <line class="gedge" x1="400" y1="130" x2="460" y2="220"/>
+            <line class="gedge" x1="260" y1="220" x2="460" y2="220"/>
+            <g class="gnode checking"><circle cx="260" cy="40" r="26"/><text x="260" y="41">Ann</text></g>
+            <g class="gnode"><circle cx="120" cy="130" r="26"/><text x="120" y="131">Ben</text></g>
+            <g class="gnode"><circle cx="400" cy="130" r="26"/><text x="400" y="131">Cam</text></g>
+            <g class="gnode"><circle cx="260" cy="220" r="26"/><text x="260" y="221">Dee</text></g>
+            <g class="gnode checking"><circle cx="460" cy="220" r="26"/><text x="460" y="221">Eli</text></g>
+          </svg>
+        </div>
+        <div class="grid cols2">
+          <div class="panel">
+            <table class="minitable">
+              <tr><th></th><th>Ann</th><th>Ben</th><th>Cam</th><th>Dee</th><th>Eli</th></tr>
+            <tr><td class="rowhead">Ann</td><td class="diag">0</td><td class="one">1</td><td class="one">1</td><td class="zero">0</td><td class="zero newcell">0</td></tr>
+            <tr><td class="rowhead">Ben</td><td class="one">1</td><td class="diag">0</td><td class="undetermined">&middot;</td><td class="undetermined">&middot;</td><td class="undetermined">&middot;</td></tr>
+            <tr><td class="rowhead">Cam</td><td class="one">1</td><td class="undetermined">&middot;</td><td class="diag">0</td><td class="undetermined">&middot;</td><td class="undetermined">&middot;</td></tr>
+            <tr><td class="rowhead">Dee</td><td class="zero">0</td><td class="undetermined">&middot;</td><td class="undetermined">&middot;</td><td class="diag">0</td><td class="undetermined">&middot;</td></tr>
+            <tr><td class="rowhead">Eli</td><td class="zero newcell">0</td><td class="undetermined">&middot;</td><td class="undetermined">&middot;</td><td class="undetermined">&middot;</td><td class="diag">0</td></tr>
+            </table>
+          </div>
+          <div class="panel">
+            <ul class="notes">
+              <li>Ann and Eli are NOT connected — write 0 in both [Ann,Eli] and [Eli,Ann].</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide">
+        <h2 class="slide-title">9 — Checking Ben — Cam</h2>
+        <p class="slide-sub">Ben and Cam are NOT connected — write 0 in both [Ben,Cam] and [Cam,Ben].</p>
+        <div class="graph-diagram small">
+          <svg class="gsvg" width="360" height="180" viewBox="0 0 520 260">
+            <line class="gedge" x1="260" y1="40" x2="120" y2="130"/>
+            <line class="gedge" x1="260" y1="40" x2="400" y2="130"/>
+            <line class="gedge" x1="120" y1="130" x2="260" y2="220"/>
+            <line class="gedge" x1="400" y1="130" x2="260" y2="220"/>
+            <line class="gedge" x1="400" y1="130" x2="460" y2="220"/>
+            <line class="gedge" x1="260" y1="220" x2="460" y2="220"/>
+            <g class="gnode"><circle cx="260" cy="40" r="26"/><text x="260" y="41">Ann</text></g>
+            <g class="gnode checking"><circle cx="120" cy="130" r="26"/><text x="120" y="131">Ben</text></g>
+            <g class="gnode checking"><circle cx="400" cy="130" r="26"/><text x="400" y="131">Cam</text></g>
+            <g class="gnode"><circle cx="260" cy="220" r="26"/><text x="260" y="221">Dee</text></g>
+            <g class="gnode"><circle cx="460" cy="220" r="26"/><text x="460" y="221">Eli</text></g>
+          </svg>
+        </div>
+        <div class="grid cols2">
+          <div class="panel">
+            <table class="minitable">
+              <tr><th></th><th>Ann</th><th>Ben</th><th>Cam</th><th>Dee</th><th>Eli</th></tr>
+            <tr><td class="rowhead">Ann</td><td class="diag">0</td><td class="one">1</td><td class="one">1</td><td class="zero">0</td><td class="zero">0</td></tr>
+            <tr><td class="rowhead">Ben</td><td class="one">1</td><td class="diag">0</td><td class="zero newcell">0</td><td class="undetermined">&middot;</td><td class="undetermined">&middot;</td></tr>
+            <tr><td class="rowhead">Cam</td><td class="one">1</td><td class="zero newcell">0</td><td class="diag">0</td><td class="undetermined">&middot;</td><td class="undetermined">&middot;</td></tr>
+            <tr><td class="rowhead">Dee</td><td class="zero">0</td><td class="undetermined">&middot;</td><td class="undetermined">&middot;</td><td class="diag">0</td><td class="undetermined">&middot;</td></tr>
+            <tr><td class="rowhead">Eli</td><td class="zero">0</td><td class="undetermined">&middot;</td><td class="undetermined">&middot;</td><td class="undetermined">&middot;</td><td class="diag">0</td></tr>
+            </table>
+          </div>
+          <div class="panel">
+            <ul class="notes">
+              <li>Ben and Cam are NOT connected — write 0 in both [Ben,Cam] and [Cam,Ben].</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide">
+        <h2 class="slide-title">10 — Checking Ben — Dee</h2>
+        <p class="slide-sub">Ben and Dee ARE connected — write 1 in both [Ben,Dee] and [Dee,Ben].</p>
+        <div class="graph-diagram small">
+          <svg class="gsvg" width="360" height="180" viewBox="0 0 520 260">
+            <line class="gedge" x1="260" y1="40" x2="120" y2="130"/>
+            <line class="gedge" x1="260" y1="40" x2="400" y2="130"/>
+            <line class="gedge checked" x1="120" y1="130" x2="260" y2="220"/>
+            <line class="gedge" x1="400" y1="130" x2="260" y2="220"/>
+            <line class="gedge" x1="400" y1="130" x2="460" y2="220"/>
+            <line class="gedge" x1="260" y1="220" x2="460" y2="220"/>
+            <g class="gnode"><circle cx="260" cy="40" r="26"/><text x="260" y="41">Ann</text></g>
+            <g class="gnode checking"><circle cx="120" cy="130" r="26"/><text x="120" y="131">Ben</text></g>
+            <g class="gnode"><circle cx="400" cy="130" r="26"/><text x="400" y="131">Cam</text></g>
+            <g class="gnode checking"><circle cx="260" cy="220" r="26"/><text x="260" y="221">Dee</text></g>
+            <g class="gnode"><circle cx="460" cy="220" r="26"/><text x="460" y="221">Eli</text></g>
+          </svg>
+        </div>
+        <div class="grid cols2">
+          <div class="panel">
+            <table class="minitable">
+              <tr><th></th><th>Ann</th><th>Ben</th><th>Cam</th><th>Dee</th><th>Eli</th></tr>
+            <tr><td class="rowhead">Ann</td><td class="diag">0</td><td class="one">1</td><td class="one">1</td><td class="zero">0</td><td class="zero">0</td></tr>
+            <tr><td class="rowhead">Ben</td><td class="one">1</td><td class="diag">0</td><td class="zero">0</td><td class="one newcell">1</td><td class="undetermined">&middot;</td></tr>
+            <tr><td class="rowhead">Cam</td><td class="one">1</td><td class="zero">0</td><td class="diag">0</td><td class="undetermined">&middot;</td><td class="undetermined">&middot;</td></tr>
+            <tr><td class="rowhead">Dee</td><td class="zero">0</td><td class="one newcell">1</td><td class="undetermined">&middot;</td><td class="diag">0</td><td class="undetermined">&middot;</td></tr>
+            <tr><td class="rowhead">Eli</td><td class="zero">0</td><td class="undetermined">&middot;</td><td class="undetermined">&middot;</td><td class="undetermined">&middot;</td><td class="diag">0</td></tr>
+            </table>
+          </div>
+          <div class="panel">
+            <ul class="notes">
+              <li>Ben and Dee ARE connected — write 1 in both [Ben,Dee] and [Dee,Ben].</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide">
+        <h2 class="slide-title">11 — Checking Ben — Eli</h2>
+        <p class="slide-sub">Ben and Eli are NOT connected — write 0 in both [Ben,Eli] and [Eli,Ben].</p>
+        <div class="graph-diagram small">
+          <svg class="gsvg" width="360" height="180" viewBox="0 0 520 260">
+            <line class="gedge" x1="260" y1="40" x2="120" y2="130"/>
+            <line class="gedge" x1="260" y1="40" x2="400" y2="130"/>
+            <line class="gedge" x1="120" y1="130" x2="260" y2="220"/>
+            <line class="gedge" x1="400" y1="130" x2="260" y2="220"/>
+            <line class="gedge" x1="400" y1="130" x2="460" y2="220"/>
+            <line class="gedge" x1="260" y1="220" x2="460" y2="220"/>
+            <g class="gnode"><circle cx="260" cy="40" r="26"/><text x="260" y="41">Ann</text></g>
+            <g class="gnode checking"><circle cx="120" cy="130" r="26"/><text x="120" y="131">Ben</text></g>
+            <g class="gnode"><circle cx="400" cy="130" r="26"/><text x="400" y="131">Cam</text></g>
+            <g class="gnode"><circle cx="260" cy="220" r="26"/><text x="260" y="221">Dee</text></g>
+            <g class="gnode checking"><circle cx="460" cy="220" r="26"/><text x="460" y="221">Eli</text></g>
+          </svg>
+        </div>
+        <div class="grid cols2">
+          <div class="panel">
+            <table class="minitable">
+              <tr><th></th><th>Ann</th><th>Ben</th><th>Cam</th><th>Dee</th><th>Eli</th></tr>
+            <tr><td class="rowhead">Ann</td><td class="diag">0</td><td class="one">1</td><td class="one">1</td><td class="zero">0</td><td class="zero">0</td></tr>
+            <tr><td class="rowhead">Ben</td><td class="one">1</td><td class="diag">0</td><td class="zero">0</td><td class="one">1</td><td class="zero newcell">0</td></tr>
+            <tr><td class="rowhead">Cam</td><td class="one">1</td><td class="zero">0</td><td class="diag">0</td><td class="undetermined">&middot;</td><td class="undetermined">&middot;</td></tr>
+            <tr><td class="rowhead">Dee</td><td class="zero">0</td><td class="one">1</td><td class="undetermined">&middot;</td><td class="diag">0</td><td class="undetermined">&middot;</td></tr>
+            <tr><td class="rowhead">Eli</td><td class="zero">0</td><td class="zero newcell">0</td><td class="undetermined">&middot;</td><td class="undetermined">&middot;</td><td class="diag">0</td></tr>
+            </table>
+          </div>
+          <div class="panel">
+            <ul class="notes">
+              <li>Ben and Eli are NOT connected — write 0 in both [Ben,Eli] and [Eli,Ben].</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide">
+        <h2 class="slide-title">12 — Checking Cam — Dee</h2>
+        <p class="slide-sub">Cam and Dee ARE connected — write 1 in both [Cam,Dee] and [Dee,Cam].</p>
+        <div class="graph-diagram small">
+          <svg class="gsvg" width="360" height="180" viewBox="0 0 520 260">
+            <line class="gedge" x1="260" y1="40" x2="120" y2="130"/>
+            <line class="gedge" x1="260" y1="40" x2="400" y2="130"/>
+            <line class="gedge" x1="120" y1="130" x2="260" y2="220"/>
+            <line class="gedge checked" x1="400" y1="130" x2="260" y2="220"/>
+            <line class="gedge" x1="400" y1="130" x2="460" y2="220"/>
+            <line class="gedge" x1="260" y1="220" x2="460" y2="220"/>
+            <g class="gnode"><circle cx="260" cy="40" r="26"/><text x="260" y="41">Ann</text></g>
+            <g class="gnode"><circle cx="120" cy="130" r="26"/><text x="120" y="131">Ben</text></g>
+            <g class="gnode checking"><circle cx="400" cy="130" r="26"/><text x="400" y="131">Cam</text></g>
+            <g class="gnode checking"><circle cx="260" cy="220" r="26"/><text x="260" y="221">Dee</text></g>
+            <g class="gnode"><circle cx="460" cy="220" r="26"/><text x="460" y="221">Eli</text></g>
+          </svg>
+        </div>
+        <div class="grid cols2">
+          <div class="panel">
+            <table class="minitable">
+              <tr><th></th><th>Ann</th><th>Ben</th><th>Cam</th><th>Dee</th><th>Eli</th></tr>
+            <tr><td class="rowhead">Ann</td><td class="diag">0</td><td class="one">1</td><td class="one">1</td><td class="zero">0</td><td class="zero">0</td></tr>
+            <tr><td class="rowhead">Ben</td><td class="one">1</td><td class="diag">0</td><td class="zero">0</td><td class="one">1</td><td class="zero">0</td></tr>
+            <tr><td class="rowhead">Cam</td><td class="one">1</td><td class="zero">0</td><td class="diag">0</td><td class="one newcell">1</td><td class="undetermined">&middot;</td></tr>
+            <tr><td class="rowhead">Dee</td><td class="zero">0</td><td class="one">1</td><td class="one newcell">1</td><td class="diag">0</td><td class="undetermined">&middot;</td></tr>
+            <tr><td class="rowhead">Eli</td><td class="zero">0</td><td class="zero">0</td><td class="undetermined">&middot;</td><td class="undetermined">&middot;</td><td class="diag">0</td></tr>
+            </table>
+          </div>
+          <div class="panel">
+            <ul class="notes">
+              <li>Cam and Dee ARE connected — write 1 in both [Cam,Dee] and [Dee,Cam].</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide">
+        <h2 class="slide-title">13 — Checking Cam — Eli</h2>
+        <p class="slide-sub">Cam and Eli ARE connected — write 1 in both [Cam,Eli] and [Eli,Cam].</p>
+        <div class="graph-diagram small">
+          <svg class="gsvg" width="360" height="180" viewBox="0 0 520 260">
+            <line class="gedge" x1="260" y1="40" x2="120" y2="130"/>
+            <line class="gedge" x1="260" y1="40" x2="400" y2="130"/>
+            <line class="gedge" x1="120" y1="130" x2="260" y2="220"/>
+            <line class="gedge" x1="400" y1="130" x2="260" y2="220"/>
+            <line class="gedge checked" x1="400" y1="130" x2="460" y2="220"/>
+            <line class="gedge" x1="260" y1="220" x2="460" y2="220"/>
+            <g class="gnode"><circle cx="260" cy="40" r="26"/><text x="260" y="41">Ann</text></g>
+            <g class="gnode"><circle cx="120" cy="130" r="26"/><text x="120" y="131">Ben</text></g>
+            <g class="gnode checking"><circle cx="400" cy="130" r="26"/><text x="400" y="131">Cam</text></g>
+            <g class="gnode"><circle cx="260" cy="220" r="26"/><text x="260" y="221">Dee</text></g>
+            <g class="gnode checking"><circle cx="460" cy="220" r="26"/><text x="460" y="221">Eli</text></g>
+          </svg>
+        </div>
+        <div class="grid cols2">
+          <div class="panel">
+            <table class="minitable">
+              <tr><th></th><th>Ann</th><th>Ben</th><th>Cam</th><th>Dee</th><th>Eli</th></tr>
+            <tr><td class="rowhead">Ann</td><td class="diag">0</td><td class="one">1</td><td class="one">1</td><td class="zero">0</td><td class="zero">0</td></tr>
+            <tr><td class="rowhead">Ben</td><td class="one">1</td><td class="diag">0</td><td class="zero">0</td><td class="one">1</td><td class="zero">0</td></tr>
+            <tr><td class="rowhead">Cam</td><td class="one">1</td><td class="zero">0</td><td class="diag">0</td><td class="one">1</td><td class="one newcell">1</td></tr>
+            <tr><td class="rowhead">Dee</td><td class="zero">0</td><td class="one">1</td><td class="one">1</td><td class="diag">0</td><td class="undetermined">&middot;</td></tr>
+            <tr><td class="rowhead">Eli</td><td class="zero">0</td><td class="zero">0</td><td class="one newcell">1</td><td class="undetermined">&middot;</td><td class="diag">0</td></tr>
+            </table>
+          </div>
+          <div class="panel">
+            <ul class="notes">
+              <li>Cam and Eli ARE connected — write 1 in both [Cam,Eli] and [Eli,Cam].</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide">
+        <h2 class="slide-title">14 — Checking Dee — Eli</h2>
+        <p class="slide-sub">Dee and Eli ARE connected — write 1 in both [Dee,Eli] and [Eli,Dee].</p>
+        <div class="graph-diagram small">
+          <svg class="gsvg" width="360" height="180" viewBox="0 0 520 260">
+            <line class="gedge" x1="260" y1="40" x2="120" y2="130"/>
+            <line class="gedge" x1="260" y1="40" x2="400" y2="130"/>
+            <line class="gedge" x1="120" y1="130" x2="260" y2="220"/>
+            <line class="gedge" x1="400" y1="130" x2="260" y2="220"/>
+            <line class="gedge" x1="400" y1="130" x2="460" y2="220"/>
+            <line class="gedge checked" x1="260" y1="220" x2="460" y2="220"/>
+            <g class="gnode"><circle cx="260" cy="40" r="26"/><text x="260" y="41">Ann</text></g>
+            <g class="gnode"><circle cx="120" cy="130" r="26"/><text x="120" y="131">Ben</text></g>
+            <g class="gnode"><circle cx="400" cy="130" r="26"/><text x="400" y="131">Cam</text></g>
+            <g class="gnode checking"><circle cx="260" cy="220" r="26"/><text x="260" y="221">Dee</text></g>
+            <g class="gnode checking"><circle cx="460" cy="220" r="26"/><text x="460" y="221">Eli</text></g>
+          </svg>
+        </div>
+        <div class="grid cols2">
+          <div class="panel">
+            <table class="minitable">
+              <tr><th></th><th>Ann</th><th>Ben</th><th>Cam</th><th>Dee</th><th>Eli</th></tr>
+            <tr><td class="rowhead">Ann</td><td class="diag">0</td><td class="one">1</td><td class="one">1</td><td class="zero">0</td><td class="zero">0</td></tr>
+            <tr><td class="rowhead">Ben</td><td class="one">1</td><td class="diag">0</td><td class="zero">0</td><td class="one">1</td><td class="zero">0</td></tr>
+            <tr><td class="rowhead">Cam</td><td class="one">1</td><td class="zero">0</td><td class="diag">0</td><td class="one">1</td><td class="one">1</td></tr>
+            <tr><td class="rowhead">Dee</td><td class="zero">0</td><td class="one">1</td><td class="one">1</td><td class="diag">0</td><td class="one newcell">1</td></tr>
+            <tr><td class="rowhead">Eli</td><td class="zero">0</td><td class="zero">0</td><td class="one">1</td><td class="one newcell">1</td><td class="diag">0</td></tr>
+            </table>
+          </div>
+          <div class="panel">
+            <ul class="notes">
+              <li>Dee and Eli ARE connected — write 1 in both [Dee,Eli] and [Eli,Dee].</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide">
+        <h2 class="slide-title">15 — The Completed Matrix</h2>
+        <p class="slide-sub">Every pair checked — this is exactly the matrix from before.</p>
+        <div class="graph-diagram small">
+          <svg class="gsvg" width="360" height="180" viewBox="0 0 520 260">
+            <line class="gedge" x1="260" y1="40" x2="120" y2="130"/>
+            <line class="gedge" x1="260" y1="40" x2="400" y2="130"/>
+            <line class="gedge" x1="120" y1="130" x2="260" y2="220"/>
+            <line class="gedge" x1="400" y1="130" x2="260" y2="220"/>
+            <line class="gedge" x1="400" y1="130" x2="460" y2="220"/>
+            <line class="gedge" x1="260" y1="220" x2="460" y2="220"/>
+            <g class="gnode"><circle cx="260" cy="40" r="26"/><text x="260" y="41">Ann</text></g>
+            <g class="gnode"><circle cx="120" cy="130" r="26"/><text x="120" y="131">Ben</text></g>
+            <g class="gnode"><circle cx="400" cy="130" r="26"/><text x="400" y="131">Cam</text></g>
+            <g class="gnode"><circle cx="260" cy="220" r="26"/><text x="260" y="221">Dee</text></g>
+            <g class="gnode"><circle cx="460" cy="220" r="26"/><text x="460" y="221">Eli</text></g>
+          </svg>
+        </div>
+        <div class="grid cols2">
+          <div class="panel">
+            <table class="minitable">
+              <tr><th></th><th>Ann</th><th>Ben</th><th>Cam</th><th>Dee</th><th>Eli</th></tr>
+            <tr><td class="rowhead">Ann</td><td class="diag">0</td><td class="one">1</td><td class="one">1</td><td class="zero">0</td><td class="zero">0</td></tr>
+            <tr><td class="rowhead">Ben</td><td class="one">1</td><td class="diag">0</td><td class="zero">0</td><td class="one">1</td><td class="zero">0</td></tr>
+            <tr><td class="rowhead">Cam</td><td class="one">1</td><td class="zero">0</td><td class="diag">0</td><td class="one">1</td><td class="one">1</td></tr>
+            <tr><td class="rowhead">Dee</td><td class="zero">0</td><td class="one">1</td><td class="one">1</td><td class="diag">0</td><td class="one">1</td></tr>
+            <tr><td class="rowhead">Eli</td><td class="zero">0</td><td class="zero">0</td><td class="one">1</td><td class="one">1</td><td class="diag">0</td></tr>
+            </table>
+          </div>
+          <div class="panel">
+            <ul class="notes">
+              <li>Notice it's symmetric across the diagonal (undirected graph), and most of the real-world size is spent on 0s once a graph gets bigger — that's the matrix's real cost.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 5 -->
+      <section class="slide">
+        <h2 class="slide-title">16 — Adjacency List</h2>
+        <p class="slide-sub">Storing the graph as each vertex's own contact list</p>
+        <div class="grid cols2">
+          <div class="panel">
+            <div class="adjlist">
+              <span class="key">Ann</span> <span class="arrow">→</span> Ben, Cam<br>
+              <span class="key">Ben</span> <span class="arrow">→</span> Ann, Dee<br>
+              <span class="key">Cam</span> <span class="arrow">→</span> Ann, Dee, Eli<br>
+              <span class="key">Dee</span> <span class="arrow">→</span> Ben, Cam, Eli<br>
+              <span class="key">Eli</span> <span class="arrow">→</span> Cam, Dee
+            </div>
+          </div>
+          <div class="panel">
+            <ul class="notes">
+              <li>Each vertex keeps <i>only its own neighbors</i> — nothing is stored for pairs that aren't connected.</li>
+              <li><b>Real-world read:</b> like each person's own contact list — only the friends they actually have.</li>
+              <li>To check "are Ann and Cam friends?" you scan Ann's (short) list instead of jumping to one cell.</li>
+              <li>Much smaller for a <i>sparse</i> graph (next few slides define exactly what that means).</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 6 -->
+      <section class="slide">
+        <h2 class="slide-title">17 — Which One, and When?</h2>
+        <p class="slide-sub">Same graph, two valid formats, different trade-offs</p>
+        <div class="panel" style="display:block;">
+          <table class="minitable">
+            <tr><th style="text-align:left;">&nbsp;</th><th>Space</th><th>"Are X, Y connected?"</th><th>"List all of X's neighbors"</th><th>Best for</th></tr>
+            <tr><td class="rowhead" style="text-align:left;">Adjacency Matrix</td><td>O(V²) — always, no matter how few edges</td><td>O(1) — one lookup</td><td>O(V) — scan the whole row</td><td>Small or dense graphs; simple code</td></tr>
+            <tr><td class="rowhead" style="text-align:left;">Adjacency List</td><td>O(V + E) — only pays for edges that exist</td><td>O(degree) — scan that vertex's list</td><td>O(degree) — the list <i>is</i> the answer</td><td>Large, sparse, real-world graphs</td></tr>
+          </table>
+          <p style="font-size:13px; margin:8px 0 0 0;"><b>V</b> = number of vertices, <b>E</b> = number of edges, <b>degree</b> = how many neighbors a vertex has.</p>
+        </div>
+      </section>
+
+      <!-- SLIDE 7 -->
+      <section class="slide">
+        <h2 class="slide-title">18 — Dense vs. Sparse, Defined</h2>
+        <p class="slide-sub">Not just adjectives — something you can compute</p>
+        <div class="panel" style="display:block;">
+          <ul class="notes">
+            <li>For <b>V</b> vertices, the most edges an undirected graph could possibly have is <code>V(V-1)/2</code> — every vertex connected to every other.</li>
+            <li><b>Dense graph:</b> actual edges are <i>close to</i> that maximum. <b>Sparse graph:</b> actual edges are <i>far below</i> it.</li>
+          </ul>
+          <table class="minitable" style="margin-top:8px;">
+            <tr><th style="text-align:left;">Example</th><th>V</th><th>Max possible edges</th><th>Actual edges</th><th>Dense or sparse?</th></tr>
+            <tr><td class="rowhead" style="text-align:left;">Our 5-friend example</td><td>5</td><td>10</td><td>6</td><td style="color:var(--new); font-weight:700;">fairly dense (60%)</td></tr>
+            <tr><td class="rowhead" style="text-align:left;">Round-robin chess tournament, 8 players</td><td>8</td><td>28</td><td>28</td><td style="color:var(--new); font-weight:700;">fully dense (100%)</td></tr>
+            <tr><td class="rowhead" style="text-align:left;">Real social network (~1,000 users, ~200 friends each)</td><td>1,000</td><td>~500,000</td><td>~100,000</td><td style="color:var(--acc); font-weight:700;">sparse (~20%)</td></tr>
+            <tr><td class="rowhead" style="text-align:left;">Instagram-scale network</td><td>billions</td><td>quadrillions+</td><td>a tiny sliver</td><td style="color:var(--acc); font-weight:700;">extremely sparse (&lt;0.0001%)</td></tr>
+          </table>
+          <p style="font-size:13px; margin:8px 0 0 0;">Small, tight-knit graphs tend to look dense. Real-world graphs almost always get <i>sparser</i> as they grow — you gain vertices much faster than you gain edges per vertex.</p>
+        </div>
+      </section>
+
+      <!-- SLIDE 8 -->
+      <section class="slide">
+        <h2 class="slide-title">19 — Real-World Judgment Calls</h2>
+        <p class="slide-sub">Which would you actually pick?</p>
+        <div class="branch-row">
+          <div class="branch-card">
+            <div class="bc-label">Round-robin tournament bracket</div>
+            <div class="bc-main">→ Matrix</div>
+            <div class="bc-sub">8–16 players, everyone plays everyone — nearly V(V-1)/2 edges (dense), V is small either way, and you'll constantly ask "did A already play B?" — O(1) lookup wins outright.</div>
+          </div>
+          <div class="branch-card">
+            <div class="bc-label">A small town's road map</div>
+            <div class="bc-main">→ List</div>
+            <div class="bc-sub">~50 intersections, but each one only connects to 3–4 nearby streets — most pairs are NOT directly connected. Sparse, so a matrix wastes space on mostly-0 cells.</div>
+          </div>
+        </div>
+        <div class="branch-row">
+          <div class="branch-card">
+            <div class="bc-label">Instagram's follower graph</div>
+            <div class="bc-main">→ List (mandatory)</div>
+            <div class="bc-sub">Billions of users, a few hundred follows each. A matrix would need (billions)² cells — physically impossible to store. The list is the only option.</div>
+          </div>
+          <div class="branch-card">
+            <div class="bc-label">Our 5-friend class example</div>
+            <div class="bc-main">→ Matrix (for THIS reason only)</div>
+            <div class="bc-sub">Not because real friend networks are dense — they aren't. We pick the matrix here purely because V is tiny (5), so O(V²) costs nothing, and the code stays short enough to trace on a board.</div>
+          </div>
+        </div>
+        <div class="panel" style="margin-top:12px;">
+          <p style="font-size:13.5px; margin:0;"><b>The real rule of thumb:</b> ask "how big will V get, and how sparse will it stay?" A small or naturally dense graph (tournament brackets, a handful of related tasks) → matrix. Anything that scales up with a roughly fixed number of connections per vertex (social networks, road maps, the web) → list, every time.</p>
+        </div>
+      </section>
+
+      <!-- SLIDE 9 -->
+      <section class="slide">
+        <h2 class="slide-title">20 — Key Takeaways</h2>
+        <p class="slide-sub">Before we move to Board 2 (DFS &amp; BFS)</p>
+        <div class="bottom-row">
+          <div class="what-box">
+            <h2>What We Covered</h2>
+            <ol>
+              <li>A graph is vertices + edges — no required order or root.</li>
+              <li>Vocabulary: vertex, edge, adjacent, degree, directed vs. undirected.</li>
+              <li>Graphs model social networks, maps, the web, flights, prerequisites, and computer networks.</li>
+              <li>Two ways to store a graph: adjacency matrix (grid) and adjacency list (per-vertex neighbor lists).</li>
+              <li>The choice depends on density and scale, not "correctness."</li>
+            </ol>
+          </div>
+          <div class="takeaway-box">
+            <h2>Carrying Forward</h2>
+            <ul>
+              <li>Our code will use the <b>matrix</b> — matches the textbook and keeps the code short for one class, not because it's the "better" choice in general.</li>
+              <li>Same five friends (Ann, Ben, Cam, Dee, Eli) carry into Board 2 — DFS and BFS, traced by hand on this exact graph.</li>
+              <li>Next up: Board 2.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <div class="navbar">
+    <button class="nav-btn" id="prevBtn">← Back</button>
+    <span class="step-indicator" id="stepIndicator">1 / 10</span>
+    <button class="nav-btn primary" id="nextBtn">Next →</button>
+  </div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const railItems = document.querySelectorAll('.rail-item');
+  const stage = document.querySelector('.stage');
+  let cur = 0;
+  function show(i){
+    if(i<0) i=0; if(i>=slides.length) i=slides.length-1;
+    slides.forEach((s,idx)=> s.classList.toggle('active', idx===i));
+    railItems.forEach((r,idx)=> r.classList.toggle('active', idx===i));
+    document.getElementById('stepIndicator').textContent = (i+1) + ' / ' + slides.length;
+    document.getElementById('prevBtn').disabled = i===0;
+    document.getElementById('nextBtn').disabled = i===slides.length-1;
+    stage.scrollTop = 0;
+    cur = i;
+  }
+  document.getElementById('nextBtn').addEventListener('click', ()=>show(cur+1));
+  document.getElementById('prevBtn').addEventListener('click', ()=>show(cur-1));
+  railItems.forEach((r,idx)=> r.addEventListener('click', ()=>show(idx)));
+  document.addEventListener('keydown', (e)=>{
+    if(e.key==='ArrowRight' || e.key==='PageDown' || e.key===' '){ show(cur+1); e.preventDefault(); }
+    if(e.key==='ArrowLeft' || e.key==='PageUp'){ show(cur-1); e.preventDefault(); }
+  });
+  show(0);
+</script>
+</body>
+</html>

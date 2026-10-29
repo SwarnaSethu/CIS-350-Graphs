@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Board 3 — Representing the Graph in Memory</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Architects+Daughter&family=Kalam:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#16233A; --acc:#0B6BCB; --acc-lt:#EAF1F6; --new:#D98F2B; --new-lt:#FBEBD3;
+    --green:#1F7A3D; --purple:#6B3FA0; --purple-lt:#F1E8FB; --grey:#595959;
+    --pill:#D9E8F5; --pill-border:#AFC9E3; --card-border:#D5D5D5; --shaded:#F2F2F2;
+  }
+  *{ box-sizing:border-box; }
+  html,body{ height:100%; margin:0; }
+  body{ display:flex; flex-direction:column; font-family:'Kalam', cursive; color:var(--ink);
+    background-color:#fffdf8; background-image: radial-gradient(#d9d9d9 1px, transparent 1px); background-size:18px 18px; }
+
+  header.topbar{ padding:10px 20px; border-bottom:2.5px solid var(--acc); background:#fff; flex-shrink:0; }
+  header.topbar h1{ font-family:'Architects Daughter', cursive; font-size:20px; margin:0; text-align:center; }
+  header.topbar p{ text-align:center; margin:2px 0 0 0; color:var(--grey); font-size:12.5px; }
+  .app-shell{ display:flex; flex:1; min-height:0; }
+  .rail{ width:240px; flex-shrink:0; border-right:2.5px solid var(--acc); background:#fff; overflow-y:auto; padding:10px 0 70px 0; }
+  .rail-item{ padding:10px 16px; font-size:13px; cursor:pointer; border-left:4px solid transparent; color:var(--grey); line-height:1.3; }
+  .rail-item .n{ font-weight:700; color:var(--acc); margin-right:4px; }
+  .rail-item:hover{ background:var(--acc-lt); }
+  .rail-item.active{ border-left-color:var(--acc); color:var(--ink); font-weight:700; background:var(--acc-lt); }
+  .stage{ flex:1; overflow-y:auto; padding:26px 34px 90px 34px; }
+  .slide{ display:none; max-width:1000px; margin:0 auto; }
+  .slide.active{ display:block; animation:fadein .18s ease-out; }
+  @keyframes fadein{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
+  .navbar{ position:fixed; left:240px; right:0; bottom:0; background:#fff; border-top:2.5px solid var(--acc); padding:9px 24px; display:flex; align-items:center; justify-content:space-between; box-shadow:0 -2px 8px rgba(0,0,0,.05); }
+  .nav-btn{ font-family:'Kalam', cursive; font-weight:700; font-size:14px; border:2px solid var(--acc); background:#fff; color:var(--acc); border-radius:20px; padding:7px 18px; cursor:pointer; }
+  .nav-btn:disabled{ opacity:.3; cursor:default; }
+  .nav-btn.primary{ background:var(--acc); color:#fff; }
+  .step-indicator{ font-size:13px; color:var(--grey); }
+  .slide-title{ font-family:'Architects Daughter', cursive; font-size:25px; margin:0 0 3px 0; color:var(--ink); }
+  .slide-sub{ color:var(--grey); font-size:14px; margin:0 0 16px 0; }
+
+  .grid{ display:grid; grid-template-columns:repeat(3, 1fr); gap:18px; margin-bottom:18px; }
+  .grid.cols2{ grid-template-columns:repeat(2, 1fr); }
+  .panel{ border:2px solid #7fb3e0; border-radius:14px; background:#fff; padding:12px 14px 14px 14px; }
+  .panel.wide{ grid-column: span 3; }
+  .panel.wide2{ grid-column: span 2; }
+  .panel-head{ display:flex; align-items:center; gap:8px; margin-bottom:8px; }
+  .num{ width:26px; height:26px; border-radius:50%; border:2px solid var(--acc); color:var(--acc); display:flex; align-items:center; justify-content:center; font-family:'Architects Daughter', cursive; font-size:15px; flex-shrink:0; }
+  .panel-head h3{ font-family:'Architects Daughter', cursive; font-size:16px; margin:0; text-decoration:underline; text-decoration-color:var(--acc); }
+  .tag{ display:inline-block; margin-left:4px; font-size:11px; font-family:'Kalam', cursive; font-weight:700; border-radius:6px; padding:0 6px; }
+  .tag-new{ color:var(--new); border:1.5px solid var(--new); background:var(--new-lt); }
+  .tag-class{ color:var(--purple); border:1.5px solid var(--purple); background:var(--purple-lt); }
+
+  .panel ul.notes, .panel ol.notes{ margin:0; padding-left:18px; font-size:13.5px; line-height:1.55; }
+  .panel ul.notes li, .panel ol.notes li{ margin-bottom:3px; }
+
+  .graph-diagram{ border:2px solid #C9C9C9; border-radius:12px; background:#FBFBFB; padding:16px; margin:8px 0; }
+  .graph-diagram.small{ padding:8px; }
+  .graph-diagram .cap{ text-align:center; font-size:11.5px; color:var(--grey); margin-bottom:6px; }
+  svg.gsvg{ display:block; margin:0 auto; }
+  .gnode circle{ fill:var(--pill); stroke:var(--pill-border); stroke-width:2; }
+  .gnode text{ font-family:'Consolas','Courier New',monospace; font-weight:700; font-size:13px; fill:var(--ink); text-anchor:middle; dominant-baseline:middle; }
+  .gedge{ stroke:#9aa7b8; stroke-width:2; }
+  .gnode.checking circle{ fill:var(--new-lt); stroke:var(--new); stroke-width:4; }
+  .gnode.checking text{ fill:var(--new); }
+
+  .minitable{ width:100%; border-collapse:collapse; font-size:12.5px; margin:6px 0; }
+  .minitable th{ background:var(--ink); color:#fff; padding:4px 7px; text-align:center; font-weight:700; }
+  .minitable td{ padding:4px 7px; border-bottom:1px solid #e3e3e3; text-align:center; }
+  .minitable td.rowhead{ font-weight:700; color:var(--acc); text-align:left; background:var(--acc-lt); }
+  .minitable td.one{ color:var(--green); font-weight:700; }
+  .minitable td.zero{ color:var(--grey); }
+  .minitable td.diag{ color:#bbb; background:#fafafa; }
+  .minitable td.rowhl{ outline:3px solid var(--new); outline-offset:-2px; background:var(--new-lt); }
+  .minitable th.colhl{ background:var(--new); }
+
+  /* ---------- array visualization (new for Board 3) ---------- */
+  .arr-block{ margin:14px 0; }
+  .arr-row{ display:flex; align-items:center; gap:14px; margin:7px 0; }
+  .arr-row .row-label{ width:120px; flex-shrink:0; font-weight:700; font-family:'Consolas','Courier New',monospace; font-size:13.5px; color:var(--ink); text-align:right; }
+  .idx-row{ display:flex; gap:14px; margin:0 0 2px 0; }
+  .idx-row .row-label{ width:120px; flex-shrink:0; }
+  .arr-cells{ display:flex; }
+  .idx-cells{ display:flex; }
+  .arr-cell{ width:72px; height:46px; border:2px solid var(--pill-border); display:flex; align-items:center; justify-content:center; font-family:'Consolas','Courier New',monospace; font-weight:700; font-size:13px; background:var(--pill); margin-left:-2px; color:var(--ink); }
+  .arr-cell:first-child{ margin-left:0; }
+  .arr-cell.empty{ background:#fafafa; color:#ccc; border-style:dashed; }
+  .arr-cell.newcell{ background:var(--new-lt); border-color:var(--new); border-width:3px; outline:2px solid var(--new); outline-offset:-3px; }
+  .arr-cell.hl{ background:var(--new-lt); border-color:var(--new); border-width:3px; }
+  .idx-cell{ width:72px; margin-left:-2px; text-align:center; font-size:11px; color:var(--grey); }
+  .idx-cell:first-child{ margin-left:0; }
+
+  .var-row{ display:flex; gap:14px; margin:16px 0 0 0; }
+  .var-box{ border:2.5px dashed var(--purple); border-radius:10px; padding:8px 16px; font-family:'Consolas','Courier New',monospace; font-weight:700; color:var(--purple); background:var(--purple-lt); font-size:14px; }
+  .var-box .vlab{ font-family:'Kalam', cursive; font-weight:400; font-size:11px; color:var(--grey); display:block; margin-bottom:2px; }
+  .var-box.flash{ outline:3px solid var(--new); border-color:var(--new); background:var(--new-lt); color:var(--ink); }
+
+  .bottom-row{ display:flex; gap:20px; margin-top:6px; }
+  .what-box{ border:2.5px solid var(--green); border-radius:14px; background:#fff; padding:14px 18px; flex:1; }
+  .what-box h2{ font-family:'Architects Daughter', cursive; font-size:18px; margin:0 0 8px 0; color:var(--green); text-decoration:underline; }
+  .what-box ol, .what-box ul{ margin:0; padding-left:20px; font-size:14px; line-height:1.6; }
+  .takeaway-box{ border:2.5px solid var(--purple); border-radius:14px; background:#fff; padding:14px 18px; flex:1; }
+  .takeaway-box h2{ font-family:'Architects Daughter', cursive; font-size:18px; margin:0 0 8px 0; color:var(--purple); text-decoration:underline; }
+  .takeaway-box ul{ margin:0; padding-left:20px; font-size:14px; line-height:1.6; }
+
+  .qa-card{ border:1.5px solid var(--card-border); border-radius:12px; background:#fff; padding:12px 14px; margin-bottom:12px; }
+  .qa-card .q{ font-weight:700; font-size:14px; margin-bottom:6px; }
+  .qa-card .a{ font-size:13.5px; background:var(--acc-lt); border-radius:8px; padding:7px 10px; color:var(--ink); }
+  .qa-card .a b{ color:var(--acc); }
+
+  .code-panel{ background:var(--shaded); border:1.5px solid var(--card-border); border-radius:10px; padding:12px 16px; margin:10px 0; font-family:'Consolas','Courier New',monospace; font-size:13px; line-height:1.55; color:var(--ink); overflow-x:auto; white-space:pre; }
+  .code-panel .cm{ color:var(--grey); font-style:italic; }
+  .linktable{ width:100%; border-collapse:collapse; font-size:13px; margin:10px 0; }
+  .linktable th{ background:var(--ink); color:#fff; padding:5px 9px; text-align:left; font-weight:700; }
+  .linktable td{ padding:5px 9px; border-bottom:1px solid #e3e3e3; }
+  .linktable td.code{ font-family:'Consolas','Courier New',monospace; font-size:12.5px; white-space:nowrap; }
+
+  .tracetable{ width:100%; border-collapse:collapse; font-size:12.5px; margin:10px 0; }
+  .tracetable th{ background:var(--ink); color:#fff; padding:5px 8px; text-align:left; font-weight:700; }
+  .tracetable td{ padding:5px 8px; border-bottom:1px solid #e3e3e3; text-align:left; vertical-align:top; }
+  .tracetable td.step{ font-weight:700; color:var(--acc); width:26px; }
+  .tracetable td.mono{ font-family:'Consolas','Courier New',monospace; font-size:12px; white-space:nowrap; }
+  .tracetable tr.popstep td{ color:var(--grey); }
+  .tracetable tr.donestep td{ font-weight:700; color:var(--ink); background:var(--acc-lt); }
+</style>
+</head>
+<body>
+
+  <header class="topbar">
+    <h1>Board 3 — Representing the Graph in Memory</h1>
+    <p>Before we code DFS/BFS: how do vertices[ ], adjMatrix[ , ], and visited[ ] actually store this graph?</p>
+  </header>
+
+  <div class="app-shell">
+    <nav class="rail">
+      <div class="rail-item" data-step="0"><span class="n">0</span>Roadmap</div>
+      <div class="rail-item" data-step="1"><span class="n">1</span>The Problem</div>
+      <div class="rail-item" data-step="2"><span class="n">2</span>Three Things a Graph Needs</div>
+      <div class="rail-item" data-step="3"><span class="n">3</span>Add Ann (index 0)</div>
+      <div class="rail-item" data-step="4"><span class="n">4</span>Add Ben (index 1)</div>
+      <div class="rail-item" data-step="5"><span class="n">5</span>Add Cam (index 2)</div>
+      <div class="rail-item" data-step="6"><span class="n">6</span>Add Dee (index 3)</div>
+      <div class="rail-item" data-step="7"><span class="n">7</span>Add Eli (index 4)</div>
+      <div class="rail-item" data-step="8"><span class="n">8</span>The Matrix is a 2-D Array</div>
+      <div class="rail-item" data-step="9"><span class="n">9</span>Index Alignment: Index 2</div>
+      <div class="rail-item" data-step="10"><span class="n">10</span>Index Alignment: Index 4</div>
+      <div class="rail-item" data-step="11"><span class="n">11</span>Check Your Understanding</div>
+      <div class="rail-item" data-step="12"><span class="n">12</span>The Constructor</div>
+      <div class="rail-item" data-step="13"><span class="n">13</span>AddVertex, Line by Line</div>
+      <div class="rail-item" data-step="14"><span class="n">14</span>AddEdge, Line by Line</div>
+      <div class="rail-item" data-step="15"><span class="n">15</span>IndexOf — the Shared Helper</div>
+      <div class="rail-item" data-step="16"><span class="n">16</span>DFS: Why GetUnvisitedNeighbor?</div>
+      <div class="rail-item" data-step="17"><span class="n">17</span>The Full DFS Method</div>
+      <div class="rail-item" data-step="18"><span class="n">18</span>Full DFS Trace</div>
+      <div class="rail-item" data-step="19"><span class="n">19</span>The Full BFS Method</div>
+      <div class="rail-item" data-step="20"><span class="n">20</span>Full BFS Trace</div>
+      <div class="rail-item" data-step="21"><span class="n">21</span>Key Takeaways</div>
+    </nav>
+
+    <main class="stage">
+
+      <!-- SLIDE 0 -->
+      <section class="slide">
+        <h2 class="slide-title">Board 3 — Roadmap</h2>
+        <p class="slide-sub">A short bridge between the by-hand matrix (Board 1) and writing the Graph class in code</p>
+        <div class="panel wide" style="display:block;">
+          <table class="minitable" style="font-size:13.5px;">
+            <tr><th style="text-align:left;">Step</th><th style="text-align:left;">What we cover</th></tr>
+            <tr><td class="rowhead">1</td><td style="text-align:left;">The problem: we can do this by hand — what does C# actually need to store it?</td></tr>
+            <tr><td class="rowhead">2</td><td style="text-align:left;">The three plain variables a Graph object is built from — no new data structures</td></tr>
+            <tr><td class="rowhead">3–7</td><td style="text-align:left;">Build vertices[ ] and visited[ ] one AddVertex call at a time, watching count grow</td></tr>
+            <tr><td class="rowhead">8</td><td style="text-align:left;">The matrix we already built by hand IS the 2-D array adjMatrix[ , ]</td></tr>
+            <tr><td class="rowhead">9–10</td><td style="text-align:left;">The big idea: one index means the same vertex in all three structures, every time</td></tr>
+            <tr><td class="rowhead">11</td><td style="text-align:left;">Check your understanding</td></tr>
+            <tr><td class="rowhead">12–15</td><td style="text-align:left;">The actual C# code: constructor, AddVertex, AddEdge, and the IndexOf helper, line by line</td></tr>
+            <tr><td class="rowhead">16–18</td><td style="text-align:left;">DFS in code — GetUnvisitedNeighbor, the full method, and a full trace matching Board 2 exactly</td></tr>
+            <tr><td class="rowhead">19–20</td><td style="text-align:left;">BFS in code — the full method, and a full trace matching Board 2 exactly</td></tr>
+            <tr><td class="rowhead">21</td><td style="text-align:left;">Key takeaways — the whole Graph class, start to finish</td></tr>
+          </table>
+          <p style="font-size:13px; margin-top:8px;">Same five friends as always: <b>Ann, Ben, Cam, Dee, Eli</b> — the exact graph from Board 1 and Board 2.</p>
+        </div>
+      </section>
+
+      <!-- SLIDE 1 -->
+      <section class="slide">
+        <h2 class="slide-title">1 — The Problem</h2>
+        <p class="slide-sub">We already did this by hand. Now: how does C# hold onto it?</p>
+        <div class="graph-diagram small">
+          <svg class="gsvg" width="360" height="180" viewBox="0 0 520 260">
+            <line class="gedge" x1="260" y1="40" x2="120" y2="130"/>
+            <line class="gedge" x1="260" y1="40" x2="400" y2="130"/>
+            <line class="gedge" x1="120" y1="130" x2="260" y2="220"/>
+            <line class="gedge" x1="400" y1="130" x2="260" y2="220"/>
+            <line class="gedge" x1="400" y1="130" x2="460" y2="220"/>
+            <line class="gedge" x1="260" y1="220" x2="460" y2="220"/>
+            <g class="gnode"><circle cx="260" cy="40" r="26"/><text x="260" y="41">Ann</text></g>
+            <g class="gnode"><circle cx="120" cy="130" r="26"/><text x="120" y="131">Ben</text></g>
+            <g class="gnode"><circle cx="400" cy="130" r="26"/><text x="400" y="131">Cam</text></g>
+            <g class="gnode"><circle cx="260" cy="220" r="26"/><text x="260" y="221">Dee</text></g>
+            <g class="gnode"><circle cx="460" cy="220" r="26"/><text x="460" y="221">Eli</text></g>
+          </svg>
+        </div>
+        <div class="grid cols2">
+          <div class="panel">
+            <div class="panel-head"><div class="num">a</div><h3>What We Already Know</h3></div>
+            <ul class="notes">
+              <li>Five names: Ann, Ben, Cam, Dee, Eli.</li>
+              <li>Six friendships (edges) between them.</li>
+              <li>We built a 5×5 matrix of 0s and 1s by hand, checking every pair once.</li>
+            </ul>
+          </div>
+          <div class="panel">
+            <div class="panel-head"><div class="num">b</div><h3>The Question</h3></div>
+            <ul class="notes">
+              <li>On paper, "Ann" is just a name written in a box.</li>
+              <li>In C#, a <b>Graph object</b> has to hold the names, the connections, AND whether each vertex has been visited yet — all at once, all lined up correctly.</li>
+              <li>No new data structure is needed. Just arrays, used carefully.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 2 -->
+      <section class="slide">
+        <h2 class="slide-title">2 — Three Things a Graph Needs in Code</h2>
+        <p class="slide-sub">Plus two plain variables to keep track of size. That's the whole Graph class.</p>
+        <div class="grid cols2">
+          <div class="panel">
+            <div class="panel-head"><div class="num">1</div><h3>vertices[ ]  —  array of strings</h3></div>
+            <ul class="notes">
+              <li><code>string[]</code> — one slot per vertex.</li>
+              <li><code>vertices[i]</code> = the name stored at position i.</li>
+              <li>Built once, filled in as AddVertex is called.</li>
+            </ul>
+          </div>
+          <div class="panel">
+            <div class="panel-head"><div class="num">2</div><h3>adjMatrix[ , ]  —  2-D array of ints</h3></div>
+            <ul class="notes">
+              <li><code>int[,]</code> — a grid, maxVertices rows by maxVertices columns.</li>
+              <li><code>adjMatrix[i, j]</code> = 1 if vertex i and vertex j are connected, 0 if not.</li>
+              <li>This IS the matrix from Board 1 — just written as a 2-D array instead of drawn on paper.</li>
+            </ul>
+          </div>
+          <div class="panel">
+            <div class="panel-head"><div class="num">3</div><h3>visited[ ]  —  array of bools</h3></div>
+            <ul class="notes">
+              <li><code>bool[]</code> — same length as vertices[ ].</li>
+              <li><code>visited[i]</code> = true once vertex i has been printed.</li>
+              <li>Same index as vertices[ ] always means the same person.</li>
+            </ul>
+          </div>
+          <div class="panel">
+            <div class="panel-head"><div class="num">4</div><h3>count and maxVertices  —  plain ints</h3></div>
+            <ul class="notes">
+              <li>Not arrays — just two numbers.</li>
+              <li><code>maxVertices</code> — the size the arrays were created with (set once, never changes).</li>
+              <li><code>count</code> — how many vertices have actually been added so far.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 3 -->
+      <section class="slide">
+        <h2 class="slide-title">3 — AddVertex("Ann")</h2>
+        <p class="slide-sub">Ann goes in at index 0 — the next open slot. visited[0] starts false. count becomes 1.</p>
+        <div class="arr-block">
+          <div class="idx-row">
+            <div class="row-label"></div>
+            <div class="idx-cells">
+              <div class="idx-cell">0</div><div class="idx-cell">1</div><div class="idx-cell">2</div><div class="idx-cell">3</div><div class="idx-cell">4</div>
+            </div>
+          </div>
+          <div class="arr-row">
+            <div class="row-label">vertices[ ]</div>
+            <div class="arr-cells">
+              <div class="arr-cell newcell">Ann</div>
+              <div class="arr-cell empty">·</div><div class="arr-cell empty">·</div><div class="arr-cell empty">·</div><div class="arr-cell empty">·</div>
+            </div>
+          </div>
+          <div class="arr-row">
+            <div class="row-label">visited[ ]</div>
+            <div class="arr-cells">
+              <div class="arr-cell newcell">false</div>
+              <div class="arr-cell empty">·</div><div class="arr-cell empty">·</div><div class="arr-cell empty">·</div><div class="arr-cell empty">·</div>
+            </div>
+          </div>
+        </div>
+        <div class="var-row">
+          <div class="var-box flash"><span class="vlab">count</span>1</div>
+          <div class="var-box"><span class="vlab">maxVertices</span>5</div>
+        </div>
+        <div class="panel" style="margin-top:16px;">
+          <ul class="notes">
+            <li><code>vertices[count] = "Ann"; count++;</code> — store the name at the next open slot, then move count forward by one.</li>
+            <li>Ann's index is 0 because she's the first one added — nothing fancier than that.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- SLIDE 4 -->
+      <section class="slide">
+        <h2 class="slide-title">4 — AddVertex("Ben")</h2>
+        <p class="slide-sub">Ben goes in at index 1 — wherever count is pointing right now. count becomes 2.</p>
+        <div class="arr-block">
+          <div class="idx-row">
+            <div class="row-label"></div>
+            <div class="idx-cells">
+              <div class="idx-cell">0</div><div class="idx-cell">1</div><div class="idx-cell">2</div><div class="idx-cell">3</div><div class="idx-cell">4</div>
+            </div>
+          </div>
+          <div class="arr-row">
+            <div class="row-label">vertices[ ]</div>
+            <div class="arr-cells">
+              <div class="arr-cell">Ann</div>
+              <div class="arr-cell newcell">Ben</div>
+              <div class="arr-cell empty">·</div><div class="arr-cell empty">·</div><div class="arr-cell empty">·</div>
+            </div>
+          </div>
+          <div class="arr-row">
+            <div class="row-label">visited[ ]</div>
+            <div class="arr-cells">
+              <div class="arr-cell">false</div>
+              <div class="arr-cell newcell">false</div>
+              <div class="arr-cell empty">·</div><div class="arr-cell empty">·</div><div class="arr-cell empty">·</div>
+            </div>
+          </div>
+        </div>
+        <div class="var-row">
+          <div class="var-box flash"><span class="vlab">count</span>2</div>
+          <div class="var-box"><span class="vlab">maxVertices</span>5</div>
+        </div>
+        <div class="panel" style="margin-top:16px;">
+          <ul class="notes">
+            <li>Same two lines run again: <code>vertices[count] = "Ben"; count++;</code> — count was 1, so Ben lands at index 1.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- SLIDE 5 -->
+      <section class="slide">
+        <h2 class="slide-title">5 — AddVertex("Cam")</h2>
+        <p class="slide-sub">Cam goes in at index 2. count becomes 3.</p>
+        <div class="arr-block">
+          <div class="idx-row">
+            <div class="row-label"></div>
+            <div class="idx-cells">
+              <div class="idx-cell">0</div><div class="idx-cell">1</div><div class="idx-cell">2</div><div class="idx-cell">3</div><div class="idx-cell">4</div>
+            </div>
+          </div>
+          <div class="arr-row">
+            <div class="row-label">vertices[ ]</div>
+            <div class="arr-cells">
+              <div class="arr-cell">Ann</div><div class="arr-cell">Ben</div>
+              <div class="arr-cell newcell">Cam</div>
+              <div class="arr-cell empty">·</div><div class="arr-cell empty">·</div>
+            </div>
+          </div>
+          <div class="arr-row">
+            <div class="row-label">visited[ ]</div>
+            <div class="arr-cells">
+              <div class="arr-cell">false</div><div class="arr-cell">false</div>
+              <div class="arr-cell newcell">false</div>
+              <div class="arr-cell empty">·</div><div class="arr-cell empty">·</div>
+            </div>
+          </div>
+        </div>
+        <div class="var-row">
+          <div class="var-box flash"><span class="vlab">count</span>3</div>
+          <div class="var-box"><span class="vlab">maxVertices</span>5</div>
+        </div>
+        <div class="panel" style="margin-top:16px;">
+          <ul class="notes">
+            <li>Cam lands at index 2 — remember this one, it comes back in a few slides.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- SLIDE 6 -->
+      <section class="slide">
+        <h2 class="slide-title">6 — AddVertex("Dee")</h2>
+        <p class="slide-sub">Dee goes in at index 3. count becomes 4.</p>
+        <div class="arr-block">
+          <div class="idx-row">
+            <div class="row-label"></div>
+            <div class="idx-cells">
+              <div class="idx-cell">0</div><div class="idx-cell">1</div><div class="idx-cell">2</div><div class="idx-cell">3</div><div class="idx-cell">4</div>
+            </div>
+          </div>
+          <div class="arr-row">
+            <div class="row-label">vertices[ ]</div>
+            <div class="arr-cells">
+              <div class="arr-cell">Ann</div><div class="arr-cell">Ben</div><div class="arr-cell">Cam</div>
+              <div class="arr-cell newcell">Dee</div>
+              <div class="arr-cell empty">·</div>
+            </div>
+          </div>
+          <div class="arr-row">
+            <div class="row-label">visited[ ]</div>
+            <div class="arr-cells">
+              <div class="arr-cell">false</div><div class="arr-cell">false</div><div class="arr-cell">false</div>
+              <div class="arr-cell newcell">false</div>
+              <div class="arr-cell empty">·</div>
+            </div>
+          </div>
+        </div>
+        <div class="var-row">
+          <div class="var-box flash"><span class="vlab">count</span>4</div>
+          <div class="var-box"><span class="vlab">maxVertices</span>5</div>
+        </div>
+        <div class="panel" style="margin-top:16px;">
+          <ul class="notes">
+            <li>One more to go. Notice maxVertices never changes — it was fixed back when the Graph object was created with <code>new Graph(5)</code>.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- SLIDE 7 -->
+      <section class="slide">
+        <h2 class="slide-title">7 — AddVertex("Eli")</h2>
+        <p class="slide-sub">Eli goes in at index 4. count becomes 5 — now equal to maxVertices. The Graph is full.</p>
+        <div class="arr-block">
+          <div class="idx-row">
+            <div class="row-label"></div>
+            <div class="idx-cells">
+              <div class="idx-cell">0</div><div class="idx-cell">1</div><div class="idx-cell">2</div><div class="idx-cell">3</div><div class="idx-cell">4</div>
+            </div>
+          </div>
+          <div class="arr-row">
+            <div class="row-label">vertices[ ]</div>
+            <div class="arr-cells">
+              <div class="arr-cell">Ann</div><div class="arr-cell">Ben</div><div class="arr-cell">Cam</div><div class="arr-cell">Dee</div>
+              <div class="arr-cell newcell">Eli</div>
+            </div>
+          </div>
+          <div class="arr-row">
+            <div class="row-label">visited[ ]</div>
+            <div class="arr-cells">
+              <div class="arr-cell">false</div><div class="arr-cell">false</div><div class="arr-cell">false</div><div class="arr-cell">false</div>
+              <div class="arr-cell newcell">false</div>
+            </div>
+          </div>
+        </div>
+        <div class="var-row">
+          <div class="var-box flash"><span class="vlab">count</span>5</div>
+          <div class="var-box flash"><span class="vlab">maxVertices</span>5</div>
+        </div>
+        <div class="panel" style="margin-top:16px;">
+          <ul class="notes">
+            <li>count caught up to maxVertices — if AddVertex were called one more time, it would throw an exception: the array has no more room.</li>
+            <li>This is exactly the same index numbering as Board 1: Ann=0, Ben=1, Cam=2, Dee=3, Eli=4.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- SLIDE 8 -->
+      <section class="slide">
+        <h2 class="slide-title">8 — The Matrix IS a 2-D Array</h2>
+        <p class="slide-sub">Nothing new here — this is the exact matrix from Board 1, just called adjMatrix[ , ] now.</p>
+        <div class="grid cols2">
+          <div class="panel">
+            <table class="minitable">
+              <tr><th></th><th>Ann</th><th>Ben</th><th>Cam</th><th>Dee</th><th>Eli</th></tr>
+              <tr><td class="rowhead">Ann</td><td class="diag">0</td><td class="one">1</td><td class="one">1</td><td class="zero">0</td><td class="zero">0</td></tr>
+              <tr><td class="rowhead">Ben</td><td class="one">1</td><td class="diag">0</td><td class="zero">0</td><td class="one">1</td><td class="zero">0</td></tr>
+              <tr><td class="rowhead">Cam</td><td class="one">1</td><td class="zero">0</td><td class="diag">0</td><td class="one">1</td><td class="one">1</td></tr>
+              <tr><td class="rowhead">Dee</td><td class="zero">0</td><td class="one">1</td><td class="one">1</td><td class="diag">0</td><td class="one">1</td></tr>
+              <tr><td class="rowhead">Eli</td><td class="zero">0</td><td class="zero">0</td><td class="one">1</td><td class="one">1</td><td class="diag">0</td></tr>
+            </table>
+          </div>
+          <div class="panel">
+            <ul class="notes">
+              <li>On paper, we labeled rows and columns with names.</li>
+              <li>In C#, the rows and columns are labeled with <b>indices</b> — 0 through 4 — using the exact same order vertices[ ] was filled in.</li>
+              <li><code>adjMatrix[2, 3]</code> is row 2 (Cam), column 3 (Dee) = <b>1</b>, because Cam and Dee are friends.</li>
+              <li>It's created once as <code>new int[maxVertices, maxVertices]</code>, then filled in by AddEdge — not drawn by hand anymore, but the exact same idea.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 9 -->
+      <section class="slide">
+        <h2 class="slide-title">9 — Index Alignment: Index 2</h2>
+        <p class="slide-sub">The big idea. One index. Three structures. Always the same person.</p>
+        <div class="arr-block">
+          <div class="idx-row">
+            <div class="row-label"></div>
+            <div class="idx-cells">
+              <div class="idx-cell">0</div><div class="idx-cell">1</div><div class="idx-cell hl" style="color:var(--new); font-weight:700;">2</div><div class="idx-cell">3</div><div class="idx-cell">4</div>
+            </div>
+          </div>
+          <div class="arr-row">
+            <div class="row-label">vertices[ ]</div>
+            <div class="arr-cells">
+              <div class="arr-cell">Ann</div><div class="arr-cell">Ben</div>
+              <div class="arr-cell hl">Cam</div>
+              <div class="arr-cell">Dee</div><div class="arr-cell">Eli</div>
+            </div>
+          </div>
+          <div class="arr-row">
+            <div class="row-label">visited[ ]</div>
+            <div class="arr-cells">
+              <div class="arr-cell">false</div><div class="arr-cell">false</div>
+              <div class="arr-cell hl">false</div>
+              <div class="arr-cell">false</div><div class="arr-cell">false</div>
+            </div>
+          </div>
+        </div>
+        <div class="panel" style="margin-top:4px;">
+          <table class="minitable">
+            <tr><th></th><th>Ann</th><th>Ben</th><th class="colhl" style="color:#fff;">Cam</th><th>Dee</th><th>Eli</th></tr>
+            <tr><td class="rowhead">Ann</td><td class="diag">0</td><td class="one">1</td><td class="one">1</td><td class="zero">0</td><td class="zero">0</td></tr>
+            <tr><td class="rowhead">Ben</td><td class="one">1</td><td class="diag">0</td><td class="zero">0</td><td class="one">1</td><td class="zero">0</td></tr>
+            <tr class="rowhl"><td class="rowhead">Cam</td><td class="one">1</td><td class="zero">0</td><td class="diag">0</td><td class="one">1</td><td class="one">1</td></tr>
+            <tr><td class="rowhead">Dee</td><td class="zero">0</td><td class="one">1</td><td class="one">1</td><td class="diag">0</td><td class="one">1</td></tr>
+            <tr><td class="rowhead">Eli</td><td class="zero">0</td><td class="zero">0</td><td class="one">1</td><td class="one">1</td><td class="diag">0</td></tr>
+          </table>
+        </div>
+        <div class="panel" style="margin-top:14px;">
+          <ul class="notes">
+            <li>Index 2 means <b>Cam</b> — and nothing but Cam — everywhere at once.</li>
+            <li><code>vertices[2]</code> is "Cam". <code>visited[2]</code> is Cam's visited flag. Row 2 AND column 2 of adjMatrix are Cam's connections.</li>
+            <li>This is exactly why DFS and BFS can work entirely with integers (indices) instead of juggling strings — one number says everything about one vertex.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- SLIDE 10 -->
+      <section class="slide">
+        <h2 class="slide-title">10 — Index Alignment: Index 4</h2>
+        <p class="slide-sub">Same idea, different vertex — this is the pattern, not a one-time coincidence.</p>
+        <div class="arr-block">
+          <div class="idx-row">
+            <div class="row-label"></div>
+            <div class="idx-cells">
+              <div class="idx-cell">0</div><div class="idx-cell">1</div><div class="idx-cell">2</div><div class="idx-cell">3</div><div class="idx-cell hl" style="color:var(--new); font-weight:700;">4</div>
+            </div>
+          </div>
+          <div class="arr-row">
+            <div class="row-label">vertices[ ]</div>
+            <div class="arr-cells">
+              <div class="arr-cell">Ann</div><div class="arr-cell">Ben</div><div class="arr-cell">Cam</div><div class="arr-cell">Dee</div>
+              <div class="arr-cell hl">Eli</div>
+            </div>
+          </div>
+          <div class="arr-row">
+            <div class="row-label">visited[ ]</div>
+            <div class="arr-cells">
+              <div class="arr-cell">false</div><div class="arr-cell">false</div><div class="arr-cell">false</div><div class="arr-cell">false</div>
+              <div class="arr-cell hl">false</div>
+            </div>
+          </div>
+        </div>
+        <div class="panel" style="margin-top:4px;">
+          <table class="minitable">
+            <tr><th></th><th>Ann</th><th>Ben</th><th>Cam</th><th>Dee</th><th class="colhl" style="color:#fff;">Eli</th></tr>
+            <tr><td class="rowhead">Ann</td><td class="diag">0</td><td class="one">1</td><td class="one">1</td><td class="zero">0</td><td class="zero">0</td></tr>
+            <tr><td class="rowhead">Ben</td><td class="one">1</td><td class="diag">0</td><td class="zero">0</td><td class="one">1</td><td class="zero">0</td></tr>
+            <tr><td class="rowhead">Cam</td><td class="one">1</td><td class="zero">0</td><td class="diag">0</td><td class="one">1</td><td class="one">1</td></tr>
+            <tr><td class="rowhead">Dee</td><td class="zero">0</td><td class="one">1</td><td class="one">1</td><td class="diag">0</td><td class="one">1</td></tr>
+            <tr class="rowhl"><td class="rowhead">Eli</td><td class="zero">0</td><td class="zero">0</td><td class="one">1</td><td class="one">1</td><td class="diag">0</td></tr>
+          </table>
+        </div>
+        <div class="panel" style="margin-top:14px;">
+          <ul class="notes">
+            <li>Index 4 means <b>Eli</b>, everywhere — <code>vertices[4]</code>, <code>visited[4]</code>, row 4 and column 4.</li>
+            <li>Pick ANY index from 0–4, and it will always point to the same vertex in all three structures. That's the whole trick.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- SLIDE 11 -->
+      <section class="slide">
+        <h2 class="slide-title">11 — Check Your Understanding</h2>
+        <p class="slide-sub">Answer each one yourself before reading the answer box.</p>
+        <div class="qa-card">
+          <div class="q">Q1. What data type is vertices[ ]?</div>
+          <div class="a"><b>Answer:</b> An array of strings — <code>string[]</code>. Fixed size, filled in one name at a time by AddVertex.</div>
+        </div>
+        <div class="qa-card">
+          <div class="q">Q2. True or False: adjMatrix is a List&lt;List&lt;int&gt;&gt;.</div>
+          <div class="a"><b>Answer:</b> False. It's a single 2-D array — <code>int[,]</code> — created once with a fixed size, not a list of lists.</div>
+        </div>
+        <div class="qa-card">
+          <div class="q">Q3. What type is count? What type is maxVertices?</div>
+          <div class="a"><b>Answer:</b> Both are plain <code>int</code> variables — not arrays. maxVertices is set once and never changes; count goes up by one every time AddVertex runs.</div>
+        </div>
+        <div class="qa-card">
+          <div class="q">Q4. If a sixth friend were added, what index would they get, and which three places would the number 5 show up?</div>
+          <div class="a"><b>Answer:</b> Index 5 — but only if maxVertices was at least 6, since count already equals 5 (the array is full at 5 vertices). If there were room: <code>vertices[5]</code>, <code>visited[5]</code>, and row/column 5 of adjMatrix.</div>
+        </div>
+      </section>
+
+      <!-- SLIDE 12 -->
+      <section class="slide">
+        <h2 class="slide-title">12 — The Constructor</h2>
+        <p class="slide-sub">Five fields, set up once, the moment a Graph is created</p>
+        <div class="code-panel">private string[] vertices;   <span class="cm">// vertices[i] = the name at index i</span>
+private int[,] adjMatrix;    <span class="cm">// adjMatrix[i, j] == 1 means an edge i&lt;-&gt;j</span>
+private bool[] visited;      <span class="cm">// visited[i] == true once i has been printed</span>
+private int count;           <span class="cm">// how many vertices added so far</span>
+private int maxVertices;     <span class="cm">// capacity of the arrays</span>
+
+public Graph(int maxVertices)
+{
+    this.maxVertices = maxVertices;
+    vertices = new string[maxVertices];
+    adjMatrix = new int[maxVertices, maxVertices];
+    visited = new bool[maxVertices];
+    count = 0;
+}</div>
+        <table class="linktable">
+          <tr><th>Code</th><th>Meaning</th></tr>
+          <tr><td class="code">vertices = new string[maxVertices]</td><td>build an empty array with one slot per vertex — this is the vertices[ ] row from slides 3–7, before any name is added</td></tr>
+          <tr><td class="code">adjMatrix = new int[maxVertices, maxVertices]</td><td>build the grid of zeros from slide 8 — maxVertices rows by maxVertices columns</td></tr>
+          <tr><td class="code">visited = new bool[maxVertices]</td><td>build an array of false flags, same length as vertices[ ]</td></tr>
+          <tr><td class="code">count = 0</td><td>nobody has been added yet</td></tr>
+        </table>
+        <div class="panel" style="margin-top:4px;">
+          <ul class="notes">
+            <li>All four arrays are built with the same length — maxVertices — the moment this constructor runs. That's why every index lines up across all of them, from slide 1 to the end of the program.</li>
+            <li>In the demo code, this runs once: <code>Graph g = new Graph(5);</code>.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- SLIDE 13 -->
+      <section class="slide">
+        <h2 class="slide-title">13 — AddVertex, Line by Line</h2>
+        <p class="slide-sub">This is the exact code behind slides 3–7 — run it, and the array fills in exactly how we traced it by hand</p>
+        <div class="code-panel">public void AddVertex(string label)
+{
+    if (count == maxVertices)
+        throw new InvalidOperationException("Graph is full.");
+
+    vertices[count] = label;
+    count++;
+}</div>
+        <table class="linktable">
+          <tr><th>Code</th><th>Meaning</th></tr>
+          <tr><td class="code">if (count == maxVertices) throw ...</td><td>check there's still an open slot before trying to add anyone</td></tr>
+          <tr><td class="code">vertices[count] = label</td><td>store the new name at the next open slot — whatever count is currently pointing at</td></tr>
+          <tr><td class="code">count++</td><td>move count forward by one, so the next call lands in the next slot</td></tr>
+        </table>
+        <div class="panel" style="margin-top:4px;">
+          <ul class="notes">
+            <li>Call this five times — AddVertex("Ann"), AddVertex("Ben"), AddVertex("Cam"), AddVertex("Dee"), AddVertex("Eli") — and you get exactly slides 3 through 7, one call per slide.</li>
+            <li>visited[ ] isn't touched here — it's already all false from the constructor.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- SLIDE 14 -->
+      <section class="slide">
+        <h2 class="slide-title">14 — AddEdge, Line by Line</h2>
+        <p class="slide-sub">This is how the matrix in slide 8 actually gets filled in</p>
+        <div class="code-panel">public void AddEdge(string from, string to)
+{
+    int i = IndexOf(from);
+    int j = IndexOf(to);
+    adjMatrix[i, j] = 1;
+    adjMatrix[j, i] = 1;
+}</div>
+        <table class="linktable">
+          <tr><th>Code</th><th>Meaning</th></tr>
+          <tr><td class="code">int i = IndexOf(from)</td><td>turn the first name into its row/column number</td></tr>
+          <tr><td class="code">int j = IndexOf(to)</td><td>turn the second name into its row/column number</td></tr>
+          <tr><td class="code">adjMatrix[i, j] = 1</td><td>mark the edge in one direction</td></tr>
+          <tr><td class="code">adjMatrix[j, i] = 1</td><td>mark the SAME edge in the other direction</td></tr>
+        </table>
+        <div class="panel" style="margin-top:4px;">
+          <ul class="notes">
+            <li><code>AddEdge("Ann", "Ben")</code> sets BOTH <code>[0,1]</code> and <code>[1,0]</code> to 1, in one call — that's why slide 8's matrix is symmetric across the diagonal. A friendship goes both ways.</li>
+            <li>Six calls total — one per edge — builds the whole matrix from slide 8.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- SLIDE 15 -->
+      <section class="slide">
+        <h2 class="slide-title">15 — IndexOf, the Shared Helper</h2>
+        <p class="slide-sub">AddEdge calls this twice. DFS and BFS will call it too, later.</p>
+        <div class="code-panel">private int IndexOf(string label)
+{
+    for (int i = 0; i &lt; count; i++)
+    {
+        if (vertices[i] == label)
+            return i;
+    }
+    throw new ArgumentException("No such vertex: " + label);
+}</div>
+        <table class="linktable">
+          <tr><th>Code</th><th>Meaning</th></tr>
+          <tr><td class="code">for (int i = 0; i &lt; count; i++)</td><td>walk through vertices[ ] left to right, one slot at a time</td></tr>
+          <tr><td class="code">if (vertices[i] == label) return i</td><td>found it — this is the index that belongs to that name</td></tr>
+        </table>
+        <div class="panel" style="margin-top:4px;">
+          <ul class="notes">
+            <li>A plain left-to-right search through vertices[ ] — nothing clever, just checks each name in order.</li>
+            <li>This is the one place a name ever turns into an index. Every other method — AddEdge now, DFS and BFS later — works with the index it gets back, never the name directly.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- SLIDE 16 -->
+      <section class="slide">
+        <h2 class="slide-title">16 — DFS: Why Do We Need GetUnvisitedNeighbor?</h2>
+        <p class="slide-sub">Starting from a vertex, DFS needs to answer one question: is there anywhere new to go from here?</p>
+        <div class="code-panel">private int GetUnvisitedNeighbor(int v)
+{
+    for (int j = 0; j &lt; count; j++)
+    {
+        if (adjMatrix[v, j] == 1 &amp;&amp; !visited[j])
+            return j;
+    }
+    return -1;    <span class="cm">// dead end -- every neighbor already visited</span>
+}</div>
+        <table class="linktable">
+          <tr><th>Code</th><th>Meaning</th></tr>
+          <tr><td class="code">for (int j = 0; j &lt; count; j++)</td><td>scan vertex v's whole row of adjMatrix, left to right</td></tr>
+          <tr><td class="code">if (adjMatrix[v, j]==1 &amp;&amp; !visited[j])</td><td>is j actually connected to v, AND not visited yet?</td></tr>
+          <tr><td class="code">return j</td><td>found one — hand back its index</td></tr>
+          <tr><td class="code">return -1</td><td>checked every column, nobody new — this is a dead end</td></tr>
+        </table>
+        <div class="panel" style="margin-top:4px;">
+          <ul class="notes">
+            <li>Scanning in index order (0, 1, 2, 3, 4) every time is exactly why DFS picks Ben before Cam when starting from Ann — Ben's index (1) is smaller than Cam's (2).</li>
+            <li>This is the same row we highlighted back in slide 8 and slide 9 — GetUnvisitedNeighbor is just reading across one row of the matrix.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- SLIDE 17 -->
+      <section class="slide">
+        <h2 class="slide-title">17 — The Full DFS Method</h2>
+        <p class="slide-sub">Push the start. Peek the top. If it has somewhere new to go, push there. If not, pop and back up.</p>
+        <div class="code-panel">public void DFS(string startLabel)
+{
+    for (int i = 0; i &lt; count; i++)
+        visited[i] = false;
+
+    int start = IndexOf(startLabel);
+    IntStack stack = new IntStack();
+
+    visited[start] = true;
+    Console.Write(vertices[start] + " ");
+    stack.Push(start);
+
+    while (!stack.IsEmpty())
+    {
+        int current = stack.Peek();
+        int next = GetUnvisitedNeighbor(current);
+
+        if (next == -1)
+        {
+            stack.Pop();
+        }
+        else
+        {
+            visited[next] = true;
+            Console.Write(vertices[next] + " ");
+            stack.Push(next);
+        }
+    }
+
+    Console.WriteLine();
+}</div>
+        <table class="linktable">
+          <tr><th>Code</th><th>Meaning</th></tr>
+          <tr><td class="code">visited[i] = false (for every i)</td><td>start with nobody visited</td></tr>
+          <tr><td class="code">int start = IndexOf(startLabel)</td><td>turn the starting name into an index</td></tr>
+          <tr><td class="code">stack.Push(start)</td><td>put the starting vertex on the stack</td></tr>
+          <tr><td class="code">while (!stack.IsEmpty())</td><td>keep going until the stack is empty</td></tr>
+          <tr><td class="code">int current = stack.Peek()</td><td>look at the top of the stack WITHOUT removing it</td></tr>
+          <tr><td class="code">int next = GetUnvisitedNeighbor(current)</td><td>ask: does current have anywhere new to go?</td></tr>
+          <tr><td class="code">if (next == -1) stack.Pop()</td><td>dead end — back up</td></tr>
+          <tr><td class="code">else { visited[next]=true; print; stack.Push(next); }</td><td>found somewhere new — go there</td></tr>
+        </table>
+        <div class="panel" style="margin-top:4px;">
+          <ul class="notes">
+            <li>Peek, not Pop, at the top of the loop. We only remove (Pop) a vertex once we've confirmed it has no unvisited neighbor left. If we popped first, we'd lose our place and couldn't tell where to keep exploring from.</li>
+            <li>This is IntStack doing exactly what slide 9 of Board 2 showed by hand — push to go deeper, pop to back up.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- SLIDE 18 -->
+      <section class="slide">
+        <h2 class="slide-title">18 — Full DFS Trace</h2>
+        <p class="slide-sub">Walk this table with the code above open. Every row is one pass through the while loop.</p>
+        <table class="tracetable">
+          <tr><th>#</th><th>What happens</th><th>Stack (top → bottom)</th><th>Printed so far</th></tr>
+          <tr><td class="step">1</td><td>Push Ann.</td><td class="mono">Ann</td><td>Ann</td></tr>
+          <tr><td class="step">2</td><td>Peek Ann; Ben is unvisited → push Ben.</td><td class="mono">Ben, Ann</td><td>Ann Ben</td></tr>
+          <tr><td class="step">3</td><td>Peek Ben; Dee is unvisited → push Dee.</td><td class="mono">Dee, Ben, Ann</td><td>Ann Ben Dee</td></tr>
+          <tr><td class="step">4</td><td>Peek Dee; Cam is unvisited → push Cam.</td><td class="mono">Cam, Dee, Ben, Ann</td><td>Ann Ben Dee Cam</td></tr>
+          <tr><td class="step">5</td><td>Peek Cam; Eli is unvisited → push Eli.</td><td class="mono">Eli, Cam, Dee, Ben, Ann</td><td>Ann Ben Dee Cam Eli</td></tr>
+          <tr class="popstep"><td class="step">6</td><td>Peek Eli; no unvisited neighbor → pop Eli.</td><td class="mono">Cam, Dee, Ben, Ann</td><td>(unchanged)</td></tr>
+          <tr class="popstep"><td class="step">7</td><td>Peek Cam; no unvisited neighbor → pop Cam.</td><td class="mono">Dee, Ben, Ann</td><td>(unchanged)</td></tr>
+          <tr class="popstep"><td class="step">8</td><td>Peek Dee; no unvisited neighbor → pop Dee.</td><td class="mono">Ben, Ann</td><td>(unchanged)</td></tr>
+          <tr class="popstep"><td class="step">9</td><td>Peek Ben; no unvisited neighbor → pop Ben.</td><td class="mono">Ann</td><td>(unchanged)</td></tr>
+          <tr class="popstep"><td class="step">10</td><td>Peek Ann; no unvisited neighbor → pop Ann.</td><td class="mono">(empty)</td><td>(unchanged)</td></tr>
+          <tr class="donestep"><td class="step">11</td><td>Stack is empty — while loop ends.</td><td class="mono">—</td><td>Ann Ben Dee Cam Eli</td></tr>
+        </table>
+        <div class="panel" style="margin-top:4px;">
+          <ul class="notes">
+            <li>Same order as Board 2: <b>Ann, Ben, Dee, Cam, Eli</b> — and the same order as the console output from Program.cs.</li>
+            <li>Rows 6–10 are exactly the backtracking from Board 2 — nothing new is printed, the stack just empties out one dead end at a time.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- SLIDE 19 -->
+      <section class="slide">
+        <h2 class="slide-title">19 — The Full BFS Method</h2>
+        <p class="slide-sub">Dequeue one vertex. Enqueue ALL of its unvisited neighbors before moving on to the next one.</p>
+        <div class="code-panel">public void BFS(string startLabel)
+{
+    for (int i = 0; i &lt; count; i++)
+        visited[i] = false;
+
+    int start = IndexOf(startLabel);
+    IntQueue queue = new IntQueue();
+
+    visited[start] = true;
+    Console.Write(vertices[start] + " ");
+    queue.Enqueue(start);
+
+    while (!queue.IsEmpty())
+    {
+        int current = queue.Dequeue();
+
+        for (int j = 0; j &lt; count; j++)
+        {
+            if (adjMatrix[current, j] == 1 &amp;&amp; !visited[j])
+            {
+                visited[j] = true;
+                Console.Write(vertices[j] + " ");
+                queue.Enqueue(j);
+            }
+        }
+    }
+
+    Console.WriteLine();
+}</div>
+        <table class="linktable">
+          <tr><th>Code</th><th>Meaning</th></tr>
+          <tr><td class="code">queue.Enqueue(start)</td><td>put the starting vertex in the queue</td></tr>
+          <tr><td class="code">while (!queue.IsEmpty())</td><td>keep going until the queue is empty</td></tr>
+          <tr><td class="code">int current = queue.Dequeue()</td><td>take the FRONT vertex out of the queue</td></tr>
+          <tr><td class="code">for (int j = 0; j &lt; count; j++)</td><td>check every possible neighbor of current, in order</td></tr>
+          <tr><td class="code">if (adjMatrix[current, j]==1 &amp;&amp; !visited[j])</td><td>is j actually connected, AND not visited yet?</td></tr>
+          <tr><td class="code">visited[j]=true; print; queue.Enqueue(j)</td><td>yes — visit j now, and queue it so its neighbors get checked later</td></tr>
+        </table>
+        <div class="panel" style="margin-top:4px;">
+          <ul class="notes">
+            <li>visited[j] is set to true the moment j is ENQUEUED, not when it's later dequeued. That's what stops the same vertex from being added to the queue twice when two different vertices both connect to it.</li>
+            <li>This is the one real difference from DFS: DFS pushes a single neighbor and loops back to Peek again; BFS's inner for-loop enqueues every unvisited neighbor of current before moving on.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- SLIDE 20 -->
+      <section class="slide">
+        <h2 class="slide-title">20 — Full BFS Trace</h2>
+        <p class="slide-sub">Walk this table with the code above open. Every row is one pass through the while loop.</p>
+        <table class="tracetable">
+          <tr><th>#</th><th>What happens</th><th>Queue (front → back)</th><th>Printed so far</th></tr>
+          <tr><td class="step">1</td><td>Enqueue Ann.</td><td class="mono">Ann</td><td>Ann</td></tr>
+          <tr><td class="step">2</td><td>Dequeue Ann; Ben and Cam unvisited → enqueue both.</td><td class="mono">Ben, Cam</td><td>Ann Ben Cam</td></tr>
+          <tr><td class="step">3</td><td>Dequeue Ben; Dee unvisited → enqueue Dee.</td><td class="mono">Cam, Dee</td><td>Ann Ben Cam Dee</td></tr>
+          <tr><td class="step">4</td><td>Dequeue Cam; Eli unvisited → enqueue Eli.</td><td class="mono">Dee, Eli</td><td>Ann Ben Cam Dee Eli</td></tr>
+          <tr class="popstep"><td class="step">5</td><td>Dequeue Dee; every neighbor already visited — nothing new.</td><td class="mono">Eli</td><td>(unchanged)</td></tr>
+          <tr class="donestep"><td class="step">6</td><td>Dequeue Eli; every neighbor already visited. Queue is empty — loop ends.</td><td class="mono">(empty)</td><td>Ann Ben Cam Dee Eli</td></tr>
+        </table>
+        <div class="panel" style="margin-top:4px;">
+          <ul class="notes">
+            <li>Same order as Board 2: <b>Ann, Ben, Cam, Dee, Eli</b> — and the same order as the console output from Program.cs.</li>
+            <li>Notice the shape: DFS went deep first (Ann Ben Dee Cam Eli), BFS spreads out level by level (Ann, then both of Ann's neighbors, then the rest). Same graph, same starting point, two different orders — because one uses a stack and one uses a queue.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- SLIDE 21 -->
+      <section class="slide">
+        <h2 class="slide-title">21 — Key Takeaways</h2>
+        <p class="slide-sub">The whole Graph class, start to finish</p>
+        <div class="bottom-row">
+          <div class="what-box">
+            <h2>What We Covered</h2>
+            <ol>
+              <li>A Graph object is just three arrays — vertices[ ], adjMatrix[ , ], visited[ ] — plus two plain ints, count and maxVertices.</li>
+              <li>vertices[ ] is a string array; adjMatrix is a 2-D int array; visited is a bool array. No Lists, no Dictionaries.</li>
+              <li>AddVertex fills the next open slot and moves count forward by one.</li>
+              <li>adjMatrix is the exact same matrix from Board 1 — just indexed by number instead of drawn by hand.</li>
+              <li>One index always means the same vertex across all three structures.</li>
+              <li>The constructor builds all four fields at once; AddVertex fills vertices[ ]; AddEdge fills adjMatrix[ , ]; IndexOf is the one place a name ever turns into an index.</li>
+              <li>DFS pushes to go deeper and pops to back up, using Peek first to check before ever removing — GetUnvisitedNeighbor is the question "is there anywhere new to go?", answered by reading one row of adjMatrix.</li>
+              <li>BFS dequeues one vertex and enqueues ALL of its unvisited neighbors at once, marking them visited right at enqueue time.</li>
+              <li>Both traces match Board 2 and Program.cs exactly: DFS = Ann Ben Dee Cam Eli, BFS = Ann Ben Cam Dee Eli.</li>
+            </ol>
+          </div>
+          <div class="takeaway-box">
+            <h2>The Whole Story</h2>
+            <ul>
+              <li>Every method in Graph.cs — constructor, AddVertex, AddEdge, IndexOf, GetUnvisitedNeighbor, DFS, BFS — is just reading or writing vertices[ ], adjMatrix[ , ], or visited[ ] by index.</li>
+              <li>DFS vs. BFS is really just IntStack vs. IntQueue — same graph, same starting point, two different visiting orders.</li>
+              <li>Run Program.cs and the printed output should match these traces exactly. The full explanatory handout (Part 2) covers this same code, line by line, for independent review.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <div class="navbar">
+    <button class="nav-btn" id="prevBtn">← Back</button>
+    <span class="step-indicator" id="stepIndicator">1 / 22</span>
+    <button class="nav-btn primary" id="nextBtn">Next →</button>
+  </div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const railItems = document.querySelectorAll('.rail-item');
+  const stage = document.querySelector('.stage');
+  let cur = 0;
+  function show(i){
+    if(i<0) i=0; if(i>=slides.length) i=slides.length-1;
+    slides.forEach((s,idx)=> s.classList.toggle('active', idx===i));
+    railItems.forEach((r,idx)=> r.classList.toggle('active', idx===i));
+    document.getElementById('stepIndicator').textContent = (i+1) + ' / ' + slides.length;
+    document.getElementById('prevBtn').disabled = i===0;
+    document.getElementById('nextBtn').disabled = i===slides.length-1;
+    stage.scrollTop = 0;
+    cur = i;
+  }
+  document.getElementById('nextBtn').addEventListener('click', ()=>show(cur+1));
+  document.getElementById('prevBtn').addEventListener('click', ()=>show(cur-1));
+  railItems.forEach((r,idx)=> r.addEventListener('click', ()=>show(idx)));
+  document.addEventListener('keydown', (e)=>{
+    if(e.key==='ArrowRight' || e.key==='PageDown' || e.key===' '){ show(cur+1); e.preventDefault(); }
+    if(e.key==='ArrowLeft' || e.key==='PageUp'){ show(cur-1); e.preventDefault(); }
+  });
+  show(0);
+</script>
+</body>
+</html>
