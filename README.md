@@ -1,3 +1,4 @@
+© 2026 Swarna Sethu. All rights reserved. Course material for CIS 350 — not to be copied, distributed, or reused without permission.
 # CIS 350 — Graphs
 
 Interactive, click-through "whiteboard" boards for the Graphs unit in CIS 350 (Data Structures). Each board is a single self-contained HTML file — open it in any browser, no setup required — and walks through one topic step by step using a left-hand rail, Next/Back buttons, and keyboard arrow keys, the same way the unit is taught live in class.
