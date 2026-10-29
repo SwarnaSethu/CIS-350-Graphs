@@ -209,6 +209,7 @@
             <li>Go as <b>deep</b> as possible down one path before backtracking.</li>
             <li>"Follow Ann → Ben → Ben's unvisited friend → keep going until stuck, then back up."</li>
             <li>Natural fit for a <b>Stack</b> (LIFO) — the exact <code>IntStack</code> class you already built. Push where you are; when stuck, pop back to the last fork.</li>
+            <li><b>Why a stack, specifically?</b> When DFS hits a dead end, it needs to back up to the <i>most recent</i> fork it hasn't fully explored — not the oldest one. That's exactly what LIFO gives for free: the last vertex visited is the first one reconsidered.</li>
           </ul>
         </div>
       </section>
@@ -222,6 +223,7 @@
             <li>Go <b>wide</b> first — visit everyone one hop away, then everyone two hops away, and so on.</li>
             <li>"Visit Ann, then all of Ann's direct friends, then all of THEIR unvisited friends."</li>
             <li>Natural fit for a <b>Queue</b> (FIFO) — the exact <code>IntQueue</code> class you already built. Enqueue neighbors as you find them; always handle the oldest one next.</li>
+            <li><b>Why a queue, specifically?</b> BFS wants to expand vertices in the order they were discovered — whoever's been waiting longest goes next. That's exactly FIFO: the oldest entry in the queue is always the next one handled.</li>
           </ul>
         </div>
       </section>
